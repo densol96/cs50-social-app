@@ -1,0 +1,4 @@
+back-end/*mvn*
+back-end/.vscode
+back-end/target/
+front-end/node_modules
