@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Button from "./Button";
+import AnimatedLink from "./AnimatedLink";
 
 const HomepageStyled = styled.div`
   height: 100vh;
@@ -35,7 +36,7 @@ const Content = styled.div`
   z-index: 100000;
   color: white;
 `;
-Button;
+
 const P = styled.p`
   text-transform: uppercase;
   font-size: 2.8rem;
@@ -123,7 +124,7 @@ function Homepage() {
             <input type="text" id="email" />
           </div>
           <div>
-            <labeldefault htmlFor="password">Password:</labeldefault>
+            <label htmlFor="password">Password:</label>
             <input type="text" id="password" />
           </div>
           <div>
@@ -136,9 +137,7 @@ function Homepage() {
           </div>
           <div className="btns">
             <Button>Register</Button>
-            {/* <Link size="small" variation="link">
-              Already have an account
-            </Link> */}
+            <AnimatedLink>Already have an account</AnimatedLink>
           </div>
         </Form>
         <Text>
