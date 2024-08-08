@@ -7,6 +7,21 @@ const sizes = {
     font-size: 1.5rem;
 
     &::after {
+      height: 2px;
+      bottom: -2px;
+      left: -2px;
+    }
+
+    &:hover::after {
+      width: 102%;
+    }
+  `,
+
+  medium: css`
+    font-weight: 600;
+    font-size: 1.6rem;
+
+    &::after {
       height: 1.5px;
       bottom: -2px;
       left: -2px;
@@ -43,9 +58,15 @@ const StyledLink = styled(Link)`
   }
 `;
 
-function AnimatedLink({ size = "default", color = "primary", children }) {
+function AnimatedLink({
+  size = "default",
+  color = "primary",
+  to,
+  children,
+  onClick,
+}) {
   return (
-    <StyledLink color={color} size={size}>
+    <StyledLink onClick={onClick} to={to} color={color} size={size}>
       {children}
     </StyledLink>
   );

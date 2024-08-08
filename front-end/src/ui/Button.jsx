@@ -18,6 +18,10 @@ const colors = {
     &:hover {
       color: var(--color-black);
     }
+
+    &:disabled:hover {
+      color: var(--color-white);
+    }
   `,
 };
 
@@ -49,6 +53,14 @@ const Button = styled.button`
 
   &:hover::after {
     width: 100%;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    &:hover::after {
+      width: 0;
+    }
   }
 `;
 
