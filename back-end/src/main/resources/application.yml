@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: cs50_social_app_back_end
+  datasource:
+    url: jdbc:mysql://localhost:3307/cs50?createDatabaseIfNotExist=true
+    username: root
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  security:
+    jwtSecret: 08cdfce317612391fefcd8e5560204f9ffead220fdc479eadc1d59222cb28e19
