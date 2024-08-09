@@ -112,22 +112,22 @@ function SignUp() {
   const isSubmitting = navigation.state === "submitting";
   const formElement = useRef();
   const animationTo = useMainPageAnimation(formElement);
-  const data = useActionData();
+  const actionData = useActionData();
   const displayNotification = useOutletContext();
   const navigate =  useNavigate();
 
   useEffect(()=> {
     let timerId;
-    if(data && data.notification) {
-      displayNotification(data.message, data.status);
-      if(data.status === "success") {
+    if(actionData && actionData.notification) {
+      displayNotification(actionData.message, actionData.status);
+      if(actionData.status === "success") {
         timerId = setTimeout(() => {
           animationTo("/login");
         }, 5000)
       }
     }
     return () => clearTimeout(timerId);
-  }, [data]);
+  }, [actionData]);
 
   return (
     <>
@@ -141,7 +141,7 @@ function SignUp() {
             type="text"
             name={formFields.fullName}
           />
-          {/* {errors?.[formFields.fullName]  && <p className="error">{errors[formFields.fullName]}</p>} */}
+          {actionData?.[formFields.fullName] && <p className="error">{actionData[formFields.fullName]}</p>}
           
         </div>
         <div>
@@ -153,7 +153,7 @@ function SignUp() {
             id="email"
             name={formFields.email}
           />
-          {/* {errors?.[formFields.email]&& <p className="error">{errors[formFields.email]}</p>} */}
+          {actionData?.[formFields.email] && <p className="error">{actionData[formFields.email]}</p>}
         </div>
         <div>
           <label htmlFor="password">Password:</label>
@@ -164,7 +164,7 @@ function SignUp() {
             id="password"
             name={formFields.password}
           />
-          {/* {errors?.[formFields.password] && <p className="error">{errors[formFields.password]}</p>} */}
+         {actionData?.[formFields.password] && <p className="error">{actionData[formFields.email]}</p>}
         </div>
         <div>
           <label htmlFor="confirm">Confirm password:</label>
@@ -175,7 +175,7 @@ function SignUp() {
             id="confirm"
             name={formFields.passwordConfirm}
           />
-          {/* {errors?.[formFields.passwordConfirm] && <p className="error">{errors[formFields.passwordConfirm]}</p>} */}
+          {actionData?.[formFields.passwordConfirm] && <p className="error">{actionData[formFields.passwordConfirm]}</p>}
         </div>
         <div className="terms">
           <div>
@@ -187,7 +187,7 @@ function SignUp() {
               </AnimatedLink>
             </label>
           </div>
-          {/* {errors?.[formFields.checkbox] && <p className="error">{errors[formFields.checkbox]}</p>} */}
+          {actionData?.[formFields.checkbox] && <p className="error">{actionData[formFields.checkbox]}</p>}
           </div>
         <div className="btns">
           <Button disabled={isSubmitting}>
@@ -222,17 +222,17 @@ function SignUp() {
 }
 
 export default SignUp;
+
 export async function action({ request }) {
   const data = Object.fromEntries(await request.formData());
-  const errors = {};
+  const actionData = {invalidInput: true};
   if(!data[formFields.checkbox]) {
-    errors[formFields.checkbox] = "You must agree to terms to continue";
-    return errors;
+    actionData[formFields.checkbox] = "You must agree to terms to continue";
+    return actionData;
   }
   if (data[formFields.password]!== data[formFields.passwordConfirm]) {
-    errors[formFields.password] = "Passwords do not match";
-    errors[formFields.passwordConfirm] = "Passwords do not match";
-    return errors;
+    actionData[formFields.passwordConfirm] = "Passwords do not match";
+    return actionData;
   }
   
   return await register(data);
