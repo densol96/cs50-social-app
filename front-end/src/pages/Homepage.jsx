@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { Outlet, redirect, useLocation, useNavigation } from "react-router-dom";
 
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Button from "../ui/Button";
 import AnimatedLink from "../ui/AnimatedLink";
 import StyledForm from "../ui/StyledForm";
+import SharedNotification from "../ui/SharedNotification";
 
 const HomepageStyled = styled.div`
   height: 100vh;
@@ -67,13 +68,40 @@ const H1 = styled.h1`
   animation-fill-mode: backwards;
 `;
 
+const initialStateNotification = {
+  show: false,
+  message: "",
+  status: "" // success or error
+}
+
+function reducer(state, action) {
+  switch (action.type) { 
+    case "show":
+      return {...state, show: true, message: action.payload.message, status: action.payload.status};
+    case "close": 
+      return {show: false};
+  }
+}
+
 function Homepage() {
   const location = useLocation();
   const actionFromPath = location.pathname.slice(1);
+  const [{show, message, status}, dispatch] = useReducer(reducer, initialStateNotification);
+  
+  function displayNotification(message, status) {
+    const payload = {message, status};
+    dispatch({type: "show", payload});
+  }
+
+  function hideNotification(message, type) {
+    dispatch({type: "close"});
+  }
+
   return (
+    <> 
     <HomepageStyled>
       <Content>
-        <Outlet />
+        <Outlet context={displayNotification} />
         <Text key={actionFromPath}>
           <H1 className="heading-primary">
             Welcome to
@@ -83,6 +111,8 @@ function Homepage() {
         </Text>
       </Content>
     </HomepageStyled>
+    {show && <SharedNotification status={status} hideNotification={hideNotification}>{message}</SharedNotification>}
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { redirect, useNavigation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { redirect, useActionData, useNavigate, useNavigation, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 
 import useMainPageAnimation from "../../hooks/useMainPageAnimation";
@@ -7,6 +7,8 @@ import useMainPageAnimation from "../../hooks/useMainPageAnimation";
 import StyledForm from "../../ui/StyledForm";
 import AnimatedLink from "../../ui/AnimatedLink";
 import Button from "../../ui/Button";
+
+import { register } from "../../services/authApi";
 
 const Rules = styled.div`
   position: absolute;
@@ -96,14 +98,36 @@ const Rules = styled.div`
   }
 `;
 
+const formFields = {
+  fullName: "fullName",
+  email: "email",
+  password: "password",
+  passwordConfirm: "passwordConfirm",
+  checkbox: "agreesToTerms"
+}
+
 function SignUp() {
   const [modalOpen, setModalOpen] = useState(false);
   const navigation = useNavigation();
-
   const isSubmitting = navigation.state === "submitting";
   const formElement = useRef();
-
   const animationTo = useMainPageAnimation(formElement);
+  const data = useActionData();
+  const displayNotification = useOutletContext();
+  const navigate =  useNavigate();
+
+  useEffect(()=> {
+    let timerId;
+    if(data && data.notification) {
+      displayNotification(data.message, data.status);
+      if(data.status === "success") {
+        timerId = setTimeout(() => {
+          animationTo("/login");
+        }, 5000)
+      }
+    }
+    return () => clearTimeout(timerId);
+  }, [data]);
 
   return (
     <>
@@ -115,8 +139,10 @@ function SignUp() {
             required
             id="name"
             type="text"
-            className="test"
+            name={formFields.fullName}
           />
+          {/* {errors?.[formFields.fullName]  && <p className="error">{errors[formFields.fullName]}</p>} */}
+          
         </div>
         <div>
           <label htmlFor="email">Email:</label>
@@ -125,7 +151,9 @@ function SignUp() {
             required
             type="email"
             id="email"
+            name={formFields.email}
           />
+          {/* {errors?.[formFields.email]&& <p className="error">{errors[formFields.email]}</p>} */}
         </div>
         <div>
           <label htmlFor="password">Password:</label>
@@ -134,7 +162,9 @@ function SignUp() {
             required
             type="password"
             id="password"
+            name={formFields.password}
           />
+          {/* {errors?.[formFields.password] && <p className="error">{errors[formFields.password]}</p>} */}
         </div>
         <div>
           <label htmlFor="confirm">Confirm password:</label>
@@ -143,17 +173,22 @@ function SignUp() {
             required
             type="password"
             id="confirm"
+            name={formFields.passwordConfirm}
           />
+          {/* {errors?.[formFields.passwordConfirm] && <p className="error">{errors[formFields.passwordConfirm]}</p>} */}
         </div>
         <div className="terms">
-          <input required id="checkbox" type="checkbox" />
-          <label className="rules-input" required htmlFor="checkbox">
-            I agree to
-            <AnimatedLink onClick={() => setModalOpen(true)} size="medium">
-              terms and conditions
-            </AnimatedLink>
-          </label>
-        </div>
+          <div>
+            <input name={formFields.checkbox} id="checkbox" type="checkbox" />
+            <label className="rules-input" htmlFor="checkbox">
+              I agree to
+              <AnimatedLink onClick={() => setModalOpen(true)} size="medium">
+                terms and conditions
+              </AnimatedLink>
+            </label>
+          </div>
+          {/* {errors?.[formFields.checkbox] && <p className="error">{errors[formFields.checkbox]}</p>} */}
+          </div>
         <div className="btns">
           <Button disabled={isSubmitting}>
             {isSubmitting ? "Loading.." : "Register"}
@@ -188,5 +223,17 @@ function SignUp() {
 
 export default SignUp;
 export async function action({ request }) {
-  return redirect("/login");
+  const data = Object.fromEntries(await request.formData());
+  const errors = {};
+  if(!data[formFields.checkbox]) {
+    errors[formFields.checkbox] = "You must agree to terms to continue";
+    return errors;
+  }
+  if (data[formFields.password]!== data[formFields.passwordConfirm]) {
+    errors[formFields.password] = "Passwords do not match";
+    errors[formFields.passwordConfirm] = "Passwords do not match";
+    return errors;
+  }
+  
+  return await register(data);
 }

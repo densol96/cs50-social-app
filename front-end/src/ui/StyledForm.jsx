@@ -13,7 +13,7 @@ const StyledForm = styled(Form)`
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   border-radius: 12px;
   box-shadow: var(--shadow-light--default);
   transition: all 600ms;
@@ -28,10 +28,16 @@ const StyledForm = styled(Form)`
 
   .terms {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     align-items: center;
     justify-content: center;
+
+    div {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+    }
 
     input {
       height: 2rem;
@@ -88,6 +94,15 @@ const StyledForm = styled(Form)`
         border-color: var(--color-red);
       }
     }
+  }
+
+  .error {
+    width: 100%;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-red);
+    padding: 0.5rem 0.5rem 0;
+    text-align: center;
   }
 `;
 

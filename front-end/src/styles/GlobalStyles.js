@@ -10,7 +10,11 @@ const GlobalStyles = createGlobalStyle`
         --color-white: white;
         --color-green: #22c55e;
         --color-red: #ef4444;
+        --color-red--light: #fca5a5;
         --color-grey: #444;
+
+        --color-error-transparent: rgba(109, 49, 49, 0.65);
+        --color-success-transparent: rgba(53, 95, 53, 0.65);
 
         --transition-duration--default: 400ms;
 
@@ -75,6 +79,21 @@ const GlobalStyles = createGlobalStyle`
         100% {
             transform: translateX(0%);
             opacity: 1;
+        }
+    }
+
+    @keyframes moveInFromUp {
+        0% {
+            opacity: 0;
+            top: -1rem;
+        }
+
+        50% {
+            opacity: 1;
+        }
+
+        100% {
+            top: 3rem;
         }
     }
 `;

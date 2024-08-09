@@ -37,6 +37,7 @@ export default [
       "no-case-declarations": "warn",
       "no-unused-vars": "warn",
       "no-constant-condition": "warn",
+      "no-constant-binary-expression": "warn"
     },
   },
 ];
