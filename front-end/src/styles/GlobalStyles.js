@@ -39,7 +39,7 @@ const GlobalStyles = createGlobalStyle`
         line-height: 1.5;
         font-size: 1.6rem;
         overflow-x: hidden;
-        color: #444;
+        color: var(--color-grey);
     }
 
     .heading-primary {
@@ -82,7 +82,7 @@ const GlobalStyles = createGlobalStyle`
         }
     }
 
-    @keyframes moveInFromUp {
+    @keyframes moveInFromTop {
         0% {
             opacity: 0;
             top: -1rem;
@@ -94,6 +94,30 @@ const GlobalStyles = createGlobalStyle`
 
         100% {
             top: 3rem;
+        }
+    }
+
+    @keyframes shakeUpAndDown {
+        0% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5%);
+        }
+
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
         }
     }
 `;
