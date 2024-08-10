@@ -57,8 +57,12 @@ function App() {
   const dispatch = useDispatch();
   let {jwt , authenticated, serverCalled, user} = useSelector((state) => state.auth);
   useEffect(() => {
+    if(jwt) localStorage.setItem("jwt", jwt); // synchronise with logging out
     if(!jwt) {
-      dispatch(initApp({authenticated: false, serverCalled: true, user: undefined}));
+      setTimeout(()=> {
+        dispatch(initApp({authenticated: false, serverCalled: true, user: undefined}));
+      }, 1500)
+      
     } 
     else {
       async function callServerForAuth() {

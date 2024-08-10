@@ -3,8 +3,10 @@ import styled from "styled-components";
 const StyledLoadingPage = styled.div`
     width: 100vw;
     height: 100vh;
-    background-color: var(--color-black);
+    /* background-color: var(--color-black); */
+    background-color: var(--color-black--medium);
     color: white;
+    /* color: var(--color-white); */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,7 +16,8 @@ const StyledLoadingPage = styled.div`
         height: 22px;
         border-radius: 20px;
         /* color: #514b82; */
-        color: white;
+        /* color: white; */
+        color: var(--color-white);
         border: 2px solid;
         position: relative;
     }

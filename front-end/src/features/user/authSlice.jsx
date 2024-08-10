@@ -18,10 +18,13 @@ const authSlice = createSlice({
         },
         saveJwt(state, action) {
             state.jwt = action.payload;
+        },
+        logout(state, action) {
+            state.jwt = "invalid";
         }
     }
 });
 
-export const { initApp, saveJwt } = authSlice.actions;
+export const { initApp, saveJwt, logout } = authSlice.actions;
 
 export default authSlice.reducer;

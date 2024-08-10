@@ -7,11 +7,16 @@ const GlobalStyles = createGlobalStyle`
         --border-radius--medium: 7px;
 
         --color-black: black;
-        --color-white: white;
+        --color-black--medium: rgb(22, 24, 29);
+        --color-black--light: rgb(43, 48, 59);
+
+        /* --color-white: white; */
+        --color-white: rgb(246, 247, 249);
         --color-green: #22c55e;
         --color-red: #ef4444;
         --color-red--light: #fca5a5;
         --color-grey: #444;
+        --color-grey--light: #555;
 
         --color-error-transparent: rgba(109, 49, 49, 0.65);
         --color-success-transparent: rgba(53, 95, 53, 0.65);
@@ -20,6 +25,36 @@ const GlobalStyles = createGlobalStyle`
 
         --shadow-light--default: 0 0rem 4rem 3px rgba(255, 255, 255, 0.5);
         --shadow-dark--default: 0 0rem 4rem 3px rgba(0, 0, 0, 0.5);
+
+        /* FONTS */
+
+        --font-size--xxl: 7.2rem;
+        --font-size--xl: 4.8rem;
+        --font-size--l: 3.6rem;
+        --font-size--m: 2.4rem;
+        --font-size--default: 1.6rem;
+        --font-size--s: 1.4rem;
+        --font-size--xs: 1.2rem;
+
+        /* GAPS */
+        --gap--xxl: 6rem;
+        --gap--xl: 4rem;
+        --gap--l: 3rem;
+        --gap--m: 2rem;
+        --gap--s: 1rem;
+        --gap--xs: 0.5rem;
+
+        /* OTHERS */
+        --logo-height: 4rem;
+        --logo-width: 4rem;
+
+        /* LINE_HEIGHTS */
+        --lh-med: 1.4;
+    }
+
+    /* MARGIN / PADDING UTILS */
+    .u-margin-b--big {
+        margin-bottom: 7.2rem;
     }
 
     *,
@@ -48,6 +83,10 @@ const GlobalStyles = createGlobalStyle`
         letter-spacing: 10.5px;
         font-size: 8.2rem;
         margin-bottom: 4rem;
+    }
+
+    ul {
+            list-style: none;
     }
 
     @keyframes moveInFromRight {
