@@ -1,16 +1,22 @@
 package cs.densol.back_end.services.implementations;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 import cs.densol.back_end.services.IAuthService;
 import cs.densol.back_end.services.JwtService;
-import lombok.RequiredArgsConstructor;
 import cs.densol.back_end.exceptions.AppException;
 import cs.densol.back_end.models.User;
 import cs.densol.back_end.models.dto.JwtAfterLoginDto;
 import cs.densol.back_end.models.dto.LoginDto;
+import cs.densol.back_end.models.dto.MeDto;
 import cs.densol.back_end.models.dto.RegisterDto;
 import cs.densol.back_end.models.dto.ResponseDto;
 import cs.densol.back_end.repo.IUserRepo;
@@ -53,5 +59,14 @@ public class AuthServiceImpl implements IAuthService {
             throw new AppException("Incorrect password", HttpStatus.BAD_REQUEST);
 
         return new JwtAfterLoginDto(jwtService.generateToken(user));
+    }
+
+    @Override
+    public MeDto getMe() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null)
+            throw new AppException("This is a protected route", HttpStatus.FORBIDDEN);
+        User user = (User) auth.getPrincipal();
+        return new MeDto(user.getEmail(), user.getFullName());
     }
 }

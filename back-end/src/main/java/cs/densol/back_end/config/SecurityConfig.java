@@ -25,13 +25,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/register", "/login").permitAll().anyRequest().authenticated())
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        .anyRequest().authenticated())
                 // .requestMatchers("/register").permitAll()
                 // .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(fl -> fl.disable());
+                .formLogin(formLogin -> formLogin.disable());
         return http.build();
     }
 
