@@ -1,5 +1,5 @@
-import { useReducer, useState } from "react";
-import { Outlet, redirect, useLocation, useNavigation } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
+import { Outlet, redirect, useLocation, useNavigate, useNavigation } from "react-router-dom";
 
 import styled from "styled-components";
 
@@ -7,6 +7,8 @@ import Button from "../ui/Button";
 import AnimatedLink from "../ui/AnimatedLink";
 import StyledForm from "../ui/StyledForm";
 import SharedNotification from "../ui/SharedNotification";
+import { useSelector } from "react-redux";
+import LoadingPage from "../ui/LoadingPage";
 
 const HomepageStyled = styled.div`
   height: 100vh;
@@ -83,11 +85,12 @@ function reducer(state, action) {
   }
 }
 
-function Homepage() {
+function AuthPage() {
   const location = useLocation();
   const actionFromPath = location.pathname.slice(1);
   const [{show, message, status}, dispatch] = useReducer(reducer, initialStateNotification);
-  
+  const navigate = useNavigate();
+
   function displayNotification(message, status) {
     const payload = {message, status};
     dispatch({type: "show", payload});
@@ -95,6 +98,20 @@ function Homepage() {
 
   function hideNotification(message, type) {
     dispatch({type: "close"});
+  }
+
+  const isAlreadyAuthenticated  = useSelector(state => state.auth.authenticated);
+  
+  useEffect(() => {
+    if(isAlreadyAuthenticated) {
+      setTimeout(() => {
+        navigate("/app");
+      }, 2000)
+    }
+  }, [isAlreadyAuthenticated]);
+
+  if(isAlreadyAuthenticated) {
+    return <LoadingPage/>
   }
 
   return (
@@ -116,4 +133,4 @@ function Homepage() {
   );
 }
 
-export default Homepage;
+export default AuthPage;

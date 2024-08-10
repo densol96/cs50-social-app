@@ -115,6 +115,7 @@ function SignUp() {
   const actionData = useActionData();
   const displayNotification = useOutletContext();
   const navigate =  useNavigate();
+  const [checboxChecked, setCheckboxChecked] = useState(false);
 
   useEffect(()=> {
     let timerId;
@@ -123,7 +124,7 @@ function SignUp() {
       if(actionData.status === "success") {
         timerId = setTimeout(() => {
           animationTo("/login");
-        }, 5000)
+        }, 2000)
       }
     }
     return () => clearTimeout(timerId);
@@ -141,7 +142,7 @@ function SignUp() {
             type="text"
             name={formFields.fullName}
           />
-          {actionData?.[formFields.fullName] && <p className="error">{actionData[formFields.fullName]}</p>}
+          {actionData?.[formFields.fullName] && <p key={new Date()} className="error">{actionData[formFields.fullName]}</p>}
           
         </div>
         <div>
@@ -153,7 +154,7 @@ function SignUp() {
             id="email"
             name={formFields.email}
           />
-          {actionData?.[formFields.email] && <p className="error">{actionData[formFields.email]}</p>}
+          {actionData?.[formFields.email] && <p key={new Date()} className="error">{actionData[formFields.email]}</p>}
         </div>
         <div>
           <label htmlFor="password">Password:</label>
@@ -164,7 +165,7 @@ function SignUp() {
             id="password"
             name={formFields.password}
           />
-         {actionData?.[formFields.password] && <p className="error">{actionData[formFields.email]}</p>}
+         {actionData?.[formFields.password] && <p key={new Date()} className="error">{actionData[formFields.password]}</p>}
         </div>
         <div>
           <label htmlFor="confirm">Confirm password:</label>
@@ -175,11 +176,11 @@ function SignUp() {
             id="confirm"
             name={formFields.passwordConfirm}
           />
-          {actionData?.[formFields.passwordConfirm] && <p className="error">{actionData[formFields.passwordConfirm]}</p>}
+          {actionData?.[formFields.passwordConfirm] && <p key={new Date()} className="error">{actionData[formFields.passwordConfirm]}</p>}
         </div>
         <div className="terms">
           <div>
-            <input name={formFields.checkbox} id="checkbox" type="checkbox" />
+            <input name={formFields.checkbox} id="checkbox" type="checkbox" checked={checboxChecked} onChange={(e) => setCheckboxChecked(e.target.checked)} />
             <label className="rules-input" htmlFor="checkbox">
               I agree to
               <AnimatedLink onClick={() => setModalOpen(true)} size="medium">
@@ -187,10 +188,10 @@ function SignUp() {
               </AnimatedLink>
             </label>
           </div>
-          {actionData?.[formFields.checkbox] && <p className="error">{actionData[formFields.checkbox]}</p>}
+          {actionData?.[formFields.checkbox] && <p key={new Date()} className="error">{actionData[formFields.checkbox]}</p>}
           </div>
         <div className="btns">
-          <Button disabled={isSubmitting}>
+          <Button disabled={isSubmitting || !checboxChecked}>
             {isSubmitting ? "Loading.." : "Register"}
           </Button>
 

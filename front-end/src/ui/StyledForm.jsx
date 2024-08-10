@@ -103,6 +103,8 @@ const StyledForm = styled(Form)`
     color: var(--color-red);
     padding: 0.5rem 0.5rem 0;
     text-align: center;
+    animation-name: shakeUpAndDown;
+    animation-duration: 500ms;
   }
 `;
 
