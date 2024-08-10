@@ -1,10 +1,10 @@
 package cs.densol.back_end.services.implementations;
 
+import java.util.HashMap;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import cs.densol.back_end.services.IAuthService;
 import cs.densol.back_end.services.JwtService;
 import cs.densol.back_end.exceptions.AppException;
+import cs.densol.back_end.exceptions.InvalidFieldsException;
 import cs.densol.back_end.models.User;
 import cs.densol.back_end.models.dto.JwtAfterLoginDto;
 import cs.densol.back_end.models.dto.LoginDto;
@@ -36,11 +37,16 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public ResponseDto register(RegisterDto data) {
-        if (!data.password().equals(data.passwordConfirm()))
-            throw new AppException("Password and confirmation must match", HttpStatus.BAD_REQUEST);
+        HashMap<String, String> fieldErrors = new HashMap<>();
+        if (!data.password().equals(data.passwordConfirm())) {
+            fieldErrors.put("passwordConfirm", "Passwords must match");
+            throw new InvalidFieldsException(fieldErrors);
+        }
 
-        if (userRepo.existsByEmail(data.email()))
-            throw new AppException("Email is already in use", HttpStatus.BAD_REQUEST);
+        if (userRepo.existsByEmail(data.email())) {
+            fieldErrors.put("email", "Email is already in use");
+            throw new InvalidFieldsException(fieldErrors);
+        }
 
         User user = new User();
         user.setEmail(data.email());
@@ -52,12 +58,17 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public JwtAfterLoginDto login(LoginDto data) {
+        HashMap<String, String> fieldErrors = new HashMap<>();
         User user = userRepo.findByEmail(data.email())
-                .orElseThrow(() -> new AppException("No user found with this email", HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> {
+                    fieldErrors.put("email", "No user found with this email");
+                    throw new InvalidFieldsException(fieldErrors);
+                });
 
-        if (!passwordEncoder.matches(data.password(), user.getPassword()))
-            throw new AppException("Incorrect password", HttpStatus.BAD_REQUEST);
-
+        if (!passwordEncoder.matches(data.password(), user.getPassword())) {
+            fieldErrors.put("password", "Incorrect password");
+            throw new InvalidFieldsException(fieldErrors);
+        }
         return new JwtAfterLoginDto(jwtService.generateToken(user));
     }
 

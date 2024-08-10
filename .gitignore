@@ -1,4 +1,5 @@
 back-end/*mvn*
 back-end/.vscode
 back-end/target/
+back-end/db_settings_docker.txt
 front-end/node_modules

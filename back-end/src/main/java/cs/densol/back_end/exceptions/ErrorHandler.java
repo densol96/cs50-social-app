@@ -11,10 +11,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import cs.densol.back_end.models.dto.ErrorDto;
 import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class ErrorHandler {
+
+    private final String INVALID_INPUT_MSG = "Invalid input";
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorDto> handleNoSuchUserException(Exception e) {
         return new ResponseEntity<>(new ErrorDto("Request body is empty", null), HttpStatus.BAD_REQUEST);
@@ -22,14 +26,13 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> handleValidationException(MethodArgumentNotValidException e) {
-        System.out.println("LOL");
         HashMap<String, String> validationErrors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             validationErrors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(new ErrorDto("Invalid input", validationErrors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDto(INVALID_INPUT_MSG, validationErrors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -39,7 +42,12 @@ public class ErrorHandler {
             String violatedColumnName = error.getPropertyPath().toString();
             validationErrors.put(violatedColumnName, error.getMessage());
         });
-        return new ResponseEntity<ErrorDto>(new ErrorDto("Invalid input", validationErrors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ErrorDto>(new ErrorDto(INVALID_INPUT_MSG, validationErrors), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFieldsException.class)
+    public ResponseEntity<ErrorDto> handleInvalidFieldsException(InvalidFieldsException e) {
+        return new ResponseEntity<ErrorDto>(new ErrorDto(INVALID_INPUT_MSG, e.getErrors()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AppException.class)

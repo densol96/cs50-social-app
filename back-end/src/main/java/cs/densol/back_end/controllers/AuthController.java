@@ -39,7 +39,7 @@ public class AuthController {
         return new ResponseEntity<>(service.login(data), HttpStatus.OK);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/authenticate")
     public ResponseEntity<MeDto> getMe() {
         return new ResponseEntity<>(service.getMe(), HttpStatus.OK);
 
