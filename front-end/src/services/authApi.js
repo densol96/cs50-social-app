@@ -11,7 +11,6 @@ export async function register(body) {
         const response = await axios.post(`${AUTH_ENDPOINT}/register`, body);
         return {notification: true, message: response.data.message, status: "success"};
     } catch(e) {
-       
         if(e.code === 'ERR_BAD_REQUEST') {
             const {errors, message} = e.response.data;
             return {invalidInput: true, ...errors};

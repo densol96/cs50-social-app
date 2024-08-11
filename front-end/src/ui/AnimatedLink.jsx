@@ -49,6 +49,8 @@ const StyledLink = styled(Link)`
   ${(props) => colors[props.color]}
   text-decoration: none;
   position: relative;
+  display: flex;
+  align-items: center;
 
   &::after {
     content: "";

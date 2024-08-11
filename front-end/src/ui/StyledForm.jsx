@@ -11,11 +11,11 @@ const StyledForm = styled(Form)`
   transform: translateY(-50%);
   background-color: #00000063;
   backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: var(--shadow-light--default);
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow-light--default);
   transition: all 600ms;
 
   opacity: 0;

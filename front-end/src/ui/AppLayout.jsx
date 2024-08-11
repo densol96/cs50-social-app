@@ -1,11 +1,14 @@
 import { useDispatch, useSelector } from "react-redux"
 import LoadingPage from "./LoadingPage";
 import { useEffect } from "react";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useNavigation } from "react-router-dom";
 import styled from "styled-components";
-import { FaLinkedin, FaGithubSquare } from "react-icons/fa";
-import { MdForum } from "react-icons/md";
 import {logout as logoutAction} from "../features/user/authSlice";
+
+import { FaLinkedin, FaGithubSquare, FaPoll } from "react-icons/fa";
+import { MdForum } from "react-icons/md";
+import { IoSettings } from "react-icons/io5";
+import { MdRateReview } from "react-icons/md";
 
 const StyledAppLayout = styled.div`
 
@@ -18,6 +21,10 @@ const StyledAppLayout = styled.div`
         background-color:  var(--color-black--medium);
         width: 40rem;
         overflow-y: hidden;
+
+        header {
+            margin-bottom: var(--spacing--m);
+        }
 
         .logo {
             display: flex;
@@ -60,6 +67,7 @@ const StyledAppLayout = styled.div`
                     align-items: center;
                     gap: 1.5rem;
                     padding: 0.5rem 3rem;
+                    border-radius: 7px;
 
                     &:hover {
                         cursor: pointer;
@@ -115,8 +123,24 @@ const StyledAppLayout = styled.div`
         flex: 1;
         overflow-x: hidden;
         overflow-y: auto;
+        padding: var(--spacing--m) var(--spacing--largest);
     }
 `
+
+const StyledNavLink = styled(NavLink)`
+    color: inherit;
+    text-decoration: none;
+    border-radius: 7px;
+    &.active {
+        background-color: var(--color-white);
+        color: var(--color-black--medium);
+
+        &:hover li {
+            background-color: var(--color-white) !important;
+        }
+    }
+`
+
 
 function AppLayout() {
     const {authenticated, user} = useSelector(state => state.auth);
@@ -146,18 +170,26 @@ function AppLayout() {
         <StyledAppLayout>
             <sidebar>
                 <header className="logo u-margin-b--big">
+
                  <span className="logo__big-text">CS50</span> 💻 <span className="logo__small-text">Social App</span>
                 </header>
                 <nav className="sidebar__nav">
                     <ul>
-                        <li><MdForum /> Discussions</li>
-                        <li><MdForum /> Opinions</li>
-                        <li><MdForum /> Polls</li>
-                        <li><MdForum /> Community</li>
-                    </ul>
+                        <StyledNavLink to="discussions">
+                           <li><span className="icon"><MdForum /></span> Discussions</li>
+                        </StyledNavLink>
+                        <StyledNavLink to="reviews">
+                           <li><span className="icon"><MdRateReview /></span> Reviews</li>
+                        </StyledNavLink>
+                        <StyledNavLink to="polls">
+                            <li><span className="icon"><FaPoll /></span> Polls</li>
+                        </StyledNavLink>
+                    </ul> 
+
                     <ul>
-                        <li><MdForum /> Settings</li>
-                        <li><MdForum /> Mail</li>
+                        <StyledNavLink to="settings">
+                            <li><span className="icon"><IoSettings /></span> Settings</li>
+                        </StyledNavLink>
                         <li onClick={logout}><MdForum /> Log out</li>
                     </ul>
                 </nav>
@@ -173,7 +205,9 @@ function AppLayout() {
                     </div>
                 </footer>
             </sidebar>
-            <main>MAIN</main>
+            <main>
+                <Outlet/>
+            </main>
         </StyledAppLayout> 
     )
 }

@@ -25,6 +25,7 @@ const GlobalStyles = createGlobalStyle`
 
         --shadow-light--default: 0 0rem 4rem 3px rgba(255, 255, 255, 0.5);
         --shadow-dark--default: 0 0rem 4rem 3px rgba(0, 0, 0, 0.5);
+        --shadow-dark--light: 0 0rem 4rem 3px rgba(0, 0, 0, 0.15);
 
         /* FONTS */
 
@@ -50,11 +51,13 @@ const GlobalStyles = createGlobalStyle`
 
         /* LINE_HEIGHTS */
         --lh-med: 1.4;
-    }
 
-    /* MARGIN / PADDING UTILS */
-    .u-margin-b--big {
-        margin-bottom: 7.2rem;
+
+        /* SPACINGS */
+        --spacing-s: 2rem;
+        --spacing--m: 7.2rem;
+        --spacing--l: 9.2rem;
+        --spacing--largest: 15rem; 
     }
 
     *,
@@ -87,6 +90,28 @@ const GlobalStyles = createGlobalStyle`
 
     ul {
             list-style: none;
+    }
+
+    .blurred-bg {
+        background-color: #00000063;
+        backdrop-filter: blur(10px);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .search-input {
+        border-radius: var(--border-radius--medium);
+        font-family: inherit;
+        color: inherit;
+        padding:  0.5rem 1.5rem;
+        outline: none;
+        border: none;
     }
 
     @keyframes moveInFromRight {

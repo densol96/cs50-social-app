@@ -7,6 +7,13 @@ const sizes = {
     font-size: 1.8rem;
     border: 3px solid;
   `,
+
+  small: css`
+    padding: .5rem 1.5rem;
+    font-weight: 600;
+    font-size: var(--font-size--s);
+    border: 2px solid;
+  `,
 };
 
 const colors = {

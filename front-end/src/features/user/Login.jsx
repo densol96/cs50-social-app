@@ -22,9 +22,11 @@ function Login() {
   
   useEffect(()=> {
     let timerId;
-    if(actionFeedback?.notification && actionFeedback?.status === "success") {
+    if(actionFeedback?.notification) {
       displayNotification(actionFeedback.message, actionFeedback.status);
-      dispatch(saveJwt(localStorage.getItem("jwt")));
+      if(actionFeedback?.status === "success") {
+        dispatch(saveJwt(localStorage.getItem("jwt")));
+      }
     }
     return () => clearTimeout(timerId);
   }, [actionFeedback]);

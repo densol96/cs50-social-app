@@ -19,6 +19,7 @@ import { useEffect } from "react";
 import { authenticate } from "./services/authApi"; 
 import { initApp } from "./features/user/authSlice";
 import AppLayout from "./ui/AppLayout";
+import Discussions from "./features/discussions/Discussions";
 
 
 const router = createBrowserRouter([
@@ -50,6 +51,17 @@ const router = createBrowserRouter([
   {
     path: "/app",
     element: <AppLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="discussions" />,
+      },
+      {
+        path: "discussions",
+        element: <Discussions /> 
+        // action: 
+      }
+    ]
   }
 ]);
 
@@ -62,7 +74,6 @@ function App() {
       setTimeout(()=> {
         dispatch(initApp({authenticated: false, serverCalled: true, user: undefined}));
       }, 1500)
-      
     } 
     else {
       async function callServerForAuth() {
