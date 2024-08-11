@@ -67,6 +67,7 @@ public class ErrorHandler {
         System.out.println("##### UNEXPECTED EXCEPTION ######");
         System.out.println("MESSAGE: " + e.getMessage());
         System.out.println("CAUSE: " + e.getCause());
+        e.printStackTrace();
         System.out.println("###############");
     }
 

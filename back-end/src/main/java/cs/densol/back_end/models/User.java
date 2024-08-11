@@ -16,6 +16,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,12 @@ public class User implements UserDetails {
     private Role role = Role.USER;
 
     private LocalDateTime joinDateTime = LocalDateTime.now();
+
+    public User(String fullName, String encodedPassword, String email) {
+        this.fullName = fullName;
+        this.password = encodedPassword;
+        this.email = email;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
