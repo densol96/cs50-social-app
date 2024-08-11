@@ -52,4 +52,9 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
                 topic.getUpdatedAt(),
                 topic.getPosts().size());
     }
+
+    @Override
+    public Long getPagesNumTotal() {
+        return (long) Math.ceil(topicRepo.count() / (double) (RESULTS_PER_PAGE));
+    }
 }

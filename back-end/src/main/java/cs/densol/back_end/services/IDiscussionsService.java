@@ -6,5 +6,7 @@ import cs.densol.back_end.models.dto.TopicDto;
 
 public interface IDiscussionsService {
 
-    public List<TopicDto> getAllTopics(Integer page);
+    List<TopicDto> getAllTopics(Integer page);
+
+    Long getPagesNumTotal();
 }

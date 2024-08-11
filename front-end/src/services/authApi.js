@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import { BASE_API } from "../helpers/helpers";
-import { redirect } from "react-router-dom";
 
 const AUTH_ENDPOINT = `${BASE_API}/auth`;
 

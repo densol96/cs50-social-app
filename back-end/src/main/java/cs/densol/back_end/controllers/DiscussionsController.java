@@ -1,5 +1,6 @@
 package cs.densol.back_end.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ public class DiscussionsController {
     private final IDiscussionsService service;
 
     @GetMapping
-    public List<TopicDto> getTopics(@RequestParam(required = false) Integer page) {
+    public List<TopicDto> getTopics(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) String title) {
         return service.getAllTopics(page);
     }
 }

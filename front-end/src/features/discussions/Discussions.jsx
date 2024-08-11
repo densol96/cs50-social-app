@@ -3,6 +3,11 @@ import StyledForm from "../../ui/StyledForm"
 import Button from "../../ui/Button"
 import AnimatedLink from "../../ui/AnimatedLink"
 import { FaArrowRightToBracket } from "react-icons/fa6";
+import {getAllDiscussions, getAllDiscussionsPageNum} from "../../services/discussionsApi";
+import { useLoaderData } from "react-router-dom";
+import { useInView } from "react-intersection-observer";
+import Spinner from "../../ui/Spinner";
+import { useEffect, useState } from "react";
 
 const StyledDiscussions = styled.div`
 
@@ -103,10 +108,40 @@ const StyledDiscussions = styled.div`
         }
     }
 
-
+    .loader {
+        text-align: center;
+        margin-top: 3rem;
+    }
 `
 
+function proccessTimestamp(timestamp){
+    const date = new Date(timestamp);
+    return `${date.toLocaleDateString()} ${date.toTimeString().slice(0, 5)}`;
+}
+
 function Discussions() {
+    const {discussionsOnLoad, pagesTotal} = useLoaderData();
+    const { ref, inView, entry } = useInView();
+    const [currentPage, setCurrentPage] = useState(1); 
+    const [discussions, setDiscussions] = useState(discussionsOnLoad);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    // errorElement is catching the exceptions, no need for additional error handling in the logic
+    useEffect(() => {
+        if(inView) {
+            (async()=> {
+                const additionalDiscussions = await getAllDiscussions(currentPage + 1);
+                setCurrentPage(currentPage + 1);
+                setDiscussions(state => [...state, ... additionalDiscussions]);
+            })();
+        }
+    }, [inView]);
+
+    useEffect(()=> {
+        setCurrentPage(1);
+        
+    }, [searchQuery]);
+
     return <StyledDiscussions>
         <header className="header">
             <h1 className="hidden">Discussions</h1>
@@ -117,100 +152,45 @@ function Discussions() {
                 </p>
             </section>
             <form className="search" action="">
-                <input placeholder="Search a topic by title..." className="search__input search-input" type="text" />
+                <input onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} placeholder="Search a topic by title..." className="search__input search-input" type="text" />
                 <Button size="small">Create a topic</Button>
             </form>
         </header>
         <section className="topics">
             <ul className="topics__list">
-                <li>
-                    <article className="topic">
-                        <h2 className="topic__title">What was your favorite lecture so far?</h2>
+                {discussions?.length === 0 && <p>There are no any discussions at present</p> }
+                {discussions?.length !== 0 && discussions.map(discussion => 
+                <li key={discussion.id}>
+                    <article  className="topic">
+                        <h2 className="topic__title">{discussion.title}</h2>
                         <div className="topic__stats">
-                            <p>Author: <span className="topic__subheading" >John Doe</span></p>
-                            <p>Total messages: <span className="topic__subheading">37</span></p>
-                            <p>Created: <span className="topic__subheading">2022-01-01</span></p>
-                            <p>Last updated: <span className="topic__subheading">2022-01-01</span></p>
+                            <p>Author: <span className="topic__subheading" >{discussion.author.fullName}</span></p>
+                            <p>Total messages: <span className="topic__subheading">{discussion.totalMessages}</span></p>
+                            <p>Created: <span className="topic__subheading">{proccessTimestamp(discussion.createdAt)}</span></p>
+                            <p>Last updated: <span className="topic__subheading">{proccessTimestamp(discussion.updatedAt)}</span></p>
                         </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, risus non ultricies commodo, neque mauris tincidunt velit, vel aliquet enim nunc ac turpis. Aliquam erat volutpat. Donec vel neque vel felis lobortis vulputate.</span></p>
+                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>{discussion.originalPost}</span></p>
                         <p className="topic__link">
-                            <AnimatedLink size="medium">
+                            <AnimatedLink size="medium" to={`/app/discussions/${discussion.id}`}>
                                 Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
                             </AnimatedLink>
                         </p>
                     </article>
                 </li>
-                <li>
-                    <article className="topic">
-                        <h2 className="topic__title">What was your favorite lecture so far?</h2>
-                        <div className="topic__stats">
-                            <p>Author: <span className="topic__subheading" >John Doe</span></p>
-                            <p>Total messages: <span className="topic__subheading">37</span></p>
-                            <p>Created: <span className="topic__subheading">2022-01-01</span></p>
-                            <p>Last updated: <span className="topic__subheading">2022-01-01</span></p>
-                        </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, risus non ultricies commodo, neque mauris tincidunt velit, vel aliquet enim nunc ac turpis. Aliquam erat volutpat. Donec vel neque vel felis lobortis vulputate.</span></p>
-                        <p className="topic__link">
-                            <AnimatedLink size="medium">
-                                Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
-                            </AnimatedLink>
-                        </p>
-                    </article>
-                </li>
-                <li>
-                    <article className="topic">
-                        <h2 className="topic__title">What was your favorite lecture so far?</h2>
-                        <div className="topic__stats">
-                            <p>Author: <span className="topic__subheading" >John Doe</span></p>
-                            <p>Total messages: <span className="topic__subheading">37</span></p>
-                            <p>Created: <span className="topic__subheading">2022-01-01</span></p>
-                            <p>Last updated: <span className="topic__subheading">2022-01-01</span></p>
-                        </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, risus non ultricies commodo, neque mauris tincidunt velit, vel aliquet enim nunc ac turpis. Aliquam erat volutpat. Donec vel neque vel felis lobortis vulputate.</span></p>
-                        <p className="topic__link">
-                            <AnimatedLink size="medium">
-                                Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
-                            </AnimatedLink>
-                        </p>
-                    </article>
-                </li>
-                <li>
-                    <article className="topic">
-                        <h2 className="topic__title">What was your favorite lecture so far?</h2>
-                        <div className="topic__stats">
-                            <p>Author: <span className="topic__subheading" >John Doe</span></p>
-                            <p>Total messages: <span className="topic__subheading">37</span></p>
-                            <p>Created: <span className="topic__subheading">2022-01-01</span></p>
-                            <p>Last updated: <span className="topic__subheading">2022-01-01</span></p>
-                        </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, risus non ultricies commodo, neque mauris tincidunt velit, vel aliquet enim nunc ac turpis. Aliquam erat volutpat. Donec vel neque vel felis lobortis vulputate.</span></p>
-                        <p className="topic__link">
-                            <AnimatedLink size="medium">
-                                Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
-                            </AnimatedLink>
-                        </p>
-                    </article>
-                </li>
-                <li>
-                    <article className="topic">
-                        <h2 className="topic__title">What was your favorite lecture so far?</h2>
-                        <div className="topic__stats">
-                            <p>Author: <span className="topic__subheading" >John Doe</span></p>
-                            <p>Total messages: <span className="topic__subheading">37</span></p>
-                            <p>Created: <span className="topic__subheading">2022-01-01</span></p>
-                            <p>Last updated: <span className="topic__subheading">2022-01-01</span></p>
-                        </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, risus non ultricies commodo, neque mauris tincidunt velit, vel aliquet enim nunc ac turpis. Aliquam erat volutpat. Donec vel neque vel felis lobortis vulputate.</span></p>
-                        <p className="topic__link">
-                            <AnimatedLink size="medium">
-                                Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
-                            </AnimatedLink>
-                        </p>
-                    </article>
-                </li>
+                )}
             </ul>
+            {currentPage < pagesTotal && <div ref={ref} className="loader"><Spinner  /></div>}
+            
         </section>
    </StyledDiscussions>
 }
 
 export default Discussions;
+
+export function loader() {
+    const page = 1;
+    return Promise.all([getAllDiscussions(page), getAllDiscussionsPageNum()]).then(data => {
+        const [discussionsOnLoad, pagesTotal] = data;
+        return { discussionsOnLoad, pagesTotal };
+    });
+}

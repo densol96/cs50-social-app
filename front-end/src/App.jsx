@@ -19,7 +19,8 @@ import { useEffect } from "react";
 import { authenticate } from "./services/authApi"; 
 import { initApp } from "./features/user/authSlice";
 import AppLayout from "./ui/AppLayout";
-import Discussions from "./features/discussions/Discussions";
+import Discussions, {loader as discussionsLoader} from "./features/discussions/Discussions";
+import Error from "./ui/Error";
 
 
 const router = createBrowserRouter([
@@ -58,8 +59,13 @@ const router = createBrowserRouter([
       },
       {
         path: "discussions",
-        element: <Discussions /> 
-        // action: 
+        element: <Discussions />,
+        loader: discussionsLoader,
+        errorElement: <Error />
+      }, 
+      {
+        path: "reviews",
+        element: <p>HELLO THERE</p>
       }
     ]
   }

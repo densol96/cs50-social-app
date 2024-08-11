@@ -124,6 +124,7 @@ const StyledAppLayout = styled.div`
         overflow-x: hidden;
         overflow-y: auto;
         padding: var(--spacing--m) var(--spacing--largest);
+        position: relative;
     }
 `
 
@@ -164,7 +165,7 @@ function AppLayout() {
         dispatch(logoutAction());
     }
 
-    if(!authenticated || isLoading) return <LoadingPage />
+    if(!authenticated) return <LoadingPage />
 
     return (
         <StyledAppLayout>
@@ -206,7 +207,7 @@ function AppLayout() {
                 </footer>
             </sidebar>
             <main>
-                <Outlet/>
+                { isLoading ? <LoadingPage inApp={true} />  : <Outlet/> }
             </main>
         </StyledAppLayout> 
     )

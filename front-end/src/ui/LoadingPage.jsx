@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const StyledLoadingPage = styled.div`
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     /* background-color: var(--color-black); */
     background-color: var(--color-black--medium);
@@ -10,6 +10,9 @@ const StyledLoadingPage = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
 
     .loader {
         width: 20rem;
@@ -56,11 +59,11 @@ const StyledLoadingPage = styled.div`
         margin-top: 1.5rem;
     }
 `
-function LoadingPage() {
+function LoadingPage({inApp = false}) {
     return (
-        <StyledLoadingPage>
+        <StyledLoadingPage style={inApp ? {backgroundColor: 'rgb(43, 48, 59)'} : {}}>
             <header>
-                <h1 className="heading">💻 </h1>
+                <h1 className="heading"> {inApp ? `⏳` : `💻` } </h1>
                 <div className="loader"></div>
                 <h2 className="sub-heading">Loading..</h2>
             </header>
