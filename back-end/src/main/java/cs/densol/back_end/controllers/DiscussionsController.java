@@ -23,9 +23,14 @@ public class DiscussionsController {
     private final IDiscussionsService service;
 
     @GetMapping
-    public List<TopicDto> getTopics(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) String title) {
-        return service.getAllTopics(page);
+    public HashMap<String, Object> getTopics(
+            @RequestParam(required = false, name = "page") Integer page,
+            @RequestParam(required = false, name = "searchTitle") String searchTitle) {
+        List<TopicDto> topicsPerPage = service.getAllTopics(page, searchTitle);
+        Long pagesTotal = searchTitle == null ? service.getPagesNumTotal() : service.getPagesNumTotal(searchTitle);
+        HashMap<String, Object> json = new HashMap<>();
+        json.put("topics", topicsPerPage);
+        json.put("pagesTotal", pagesTotal);
+        return json;
     }
 }

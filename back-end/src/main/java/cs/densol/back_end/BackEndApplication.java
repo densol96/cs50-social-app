@@ -41,7 +41,7 @@ public class BackEndApplication {
 			topicRepo.save(newTopic);
 
 			// Additional topics
-			Topic t1 = new Topic("Topic one", me);
+			Topic t1 = new Topic("Davidka", me);
 			topicRepo.save(t1);
 			Post p1 = new Post(me, "jknjknew", t1);
 			postRepo.save(p1);
@@ -49,7 +49,7 @@ public class BackEndApplication {
 			topicRepo.save(t1);
 
 			for (int i = 0; i < 10; i++) {
-				Topic topic = new Topic("Topic one", me);
+				Topic topic = new Topic(i < 5 ? "Topic one" : "Anime is nice", me);
 				topicRepo.save(topic);
 				Post p = new Post(me, "jknjknew", topic);
 				postRepo.save(p);

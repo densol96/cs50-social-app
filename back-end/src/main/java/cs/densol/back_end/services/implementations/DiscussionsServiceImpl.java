@@ -25,7 +25,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
     private final ITopicRepo topicRepo;
 
     @Override
-    public List<TopicDto> getAllTopics(Integer page) {
+    public List<TopicDto> getAllTopics(Integer page, String searchTitle) {
         /*
          * pageNumber 0 corresponse to firstPage
          * => need to make a design-decision whether we subtract 1 from requestParam or
@@ -35,8 +35,10 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
         if (page < 0)
             throw new AppException("Page parameter cannot be a less or equal to 0", HttpStatus.BAD_REQUEST);
         Pageable pageable = PageRequest.of(page, RESULTS_PER_PAGE, Sort.by("updatedAt").descending());
-        // if [] => thats perfectly fine
-        return topicRepo.findAll(pageable).stream().map(topic -> mapTopicToDto(topic)).collect(Collectors.toList());
+
+        List<Topic> results = searchTitle == null ? topicRepo.findAll(pageable).toList()
+                : topicRepo.findAllByTitleContaining(pageable, searchTitle);
+        return results.stream().map(topic -> mapTopicToDto(topic)).collect(Collectors.toList());
     }
 
     private TopicDto mapTopicToDto(Topic topic) {
@@ -56,5 +58,10 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
     @Override
     public Long getPagesNumTotal() {
         return (long) Math.ceil(topicRepo.count() / (double) (RESULTS_PER_PAGE));
+    }
+
+    @Override
+    public Long getPagesNumTotal(String searchTitle) {
+        return (long) Math.ceil(topicRepo.countAllByTitleContaining(searchTitle) / (double) (RESULTS_PER_PAGE));
     }
 }

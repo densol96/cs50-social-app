@@ -1,5 +1,6 @@
 package cs.densol.back_end.repo;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +11,8 @@ import java.time.LocalDateTime;
 
 public interface ITopicRepo extends JpaRepository<Topic, Integer> {
 
-    List<Topic> findByTitleContaining(String searchQuery);
+    List<Topic> findAllByTitleContaining(Pageable pageable, String searchQuery);
+
+    Long countAllByTitleContaining(String searchQuery);
 
 }
