@@ -1,5 +1,7 @@
 package cs.densol.back_end.services;
 
+import java.util.List;
+
 import cs.densol.back_end.models.dto.JwtAfterLoginDto;
 import cs.densol.back_end.models.dto.LoginDto;
 import cs.densol.back_end.models.dto.MeDto;
@@ -12,5 +14,7 @@ public interface IAuthService {
     JwtAfterLoginDto login(LoginDto data);
 
     MeDto getMe();
+
+    List<String> getCurrentlyActiveUsersNames();
 
 }

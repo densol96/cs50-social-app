@@ -59,6 +59,8 @@ public class User implements UserDetails {
 
     private LocalDateTime joinDateTime = LocalDateTime.now();
 
+    private LocalDateTime lastActive;
+
     public User(String fullName, String encodedPassword, String email) {
         this.fullName = fullName;
         this.password = encodedPassword;

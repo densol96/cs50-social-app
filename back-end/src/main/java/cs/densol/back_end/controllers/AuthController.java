@@ -12,6 +12,9 @@ import cs.densol.back_end.services.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -43,6 +47,13 @@ public class AuthController {
     public ResponseEntity<MeDto> getMe() {
         return new ResponseEntity<>(service.getMe(), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/active-users")
+    public ResponseEntity<HashMap<String, Object>> getActiveUsers() {
+        var json = new HashMap<String, Object>();
+        json.put("activeUsers", service.getCurrentlyActiveUsersNames());
+        return new ResponseEntity<>(json, HttpStatus.OK);
     }
 
 }

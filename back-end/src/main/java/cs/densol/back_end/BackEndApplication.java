@@ -1,5 +1,7 @@
 package cs.densol.back_end;
 
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -49,7 +51,7 @@ public class BackEndApplication {
 			topicRepo.save(t1);
 
 			for (int i = 0; i < 10; i++) {
-				Topic topic = new Topic(i < 5 ? "Topic one" : "Anime is nice", me);
+				Topic topic = new Topic(i < 8 ? "Topic one" : "Anime is nice", me);
 				topicRepo.save(topic);
 				Post p = new Post(me, "jknjknew", topic);
 				postRepo.save(p);
@@ -57,6 +59,11 @@ public class BackEndApplication {
 				topicRepo.save(topic);
 			}
 
+			User u2 = new User("Man Man", encoder.encode("password123"),
+					"man@deni.com");
+			User u3 = new User("Guy Guy", encoder.encode("password123"),
+					"guy@deni.com");
+			userRepo.saveAll(List.of(u2, u3));
 		};
 	}
 }

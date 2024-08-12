@@ -42,3 +42,12 @@ export async function authenticate(jwt) {
     return response.data;
 
 }
+
+export async function getActiveUsers() {
+    const response = await axios.get(`${AUTH_ENDPOINT}/active-users`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem("jwt")}`,
+        }
+    });
+    return response.data.activeUsers;
+}

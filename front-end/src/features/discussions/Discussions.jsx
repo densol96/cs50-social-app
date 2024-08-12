@@ -9,6 +9,7 @@ import { useInView } from "react-intersection-observer";
 import Spinner from "../../ui/Spinner";
 import { useEffect, useState } from "react";
 import ProblemMessage from "../../ui/ProblemMessage";
+import { getActiveUsers } from "../../services/authApi";
 
 const StyledDiscussions = styled.div`
 
@@ -121,7 +122,7 @@ function proccessTimestamp(timestamp){
 }
 
 function Discussions() {
-    const {topics, pagesTotal: pagesTotalOnLoad} = useLoaderData();
+    const {topics, pagesTotal: pagesTotalOnLoad, activeUsers} = useLoaderData();
     const { ref, inView, entry } = useInView();
     const [currentPage, setCurrentPage] = useState(1); 
     const [discussions, setDiscussions] = useState(topics);
@@ -153,9 +154,9 @@ function Discussions() {
         <header className="header">
             <h1 className="hidden">Discussions</h1>
             <section className="stats text-center">
-                <h2 className="stats__heading">Currently logged in users {`{ 1 }`}:</h2>
+                <h2 className="stats__heading">Currently active users {`{ ${activeUsers.length } }`}:</h2>
                 <p className="users">
-                    <span>solodeni</span>
+                    {activeUsers?.map((user, i) => <>{`${i === 0 ? '' : '-'}`}<span key={user}>{user}</span></>)}
                 </p>
             </section>
             <form className="search" action="">
@@ -198,5 +199,7 @@ export async function loader({request}) {
     const page = 1;
     const url = new URL(request.url);
     const searchTitle = url.searchParams.get("searchTitle");
-    return await getAllDiscussions(page, searchTitle);
+    const data = await getAllDiscussions(page, searchTitle);
+    data.activeUsers = await getActiveUsers();
+    return data;
 }

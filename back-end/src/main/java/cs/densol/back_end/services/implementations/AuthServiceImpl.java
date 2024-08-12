@@ -1,6 +1,10 @@
 package cs.densol.back_end.services.implementations;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -79,5 +83,12 @@ public class AuthServiceImpl implements IAuthService {
             throw new AppException("This is a protected route", HttpStatus.FORBIDDEN);
         User user = (User) auth.getPrincipal();
         return new MeDto(user.getEmail(), user.getFullName());
+    }
+
+    @Override
+    public List<String> getCurrentlyActiveUsersNames() {
+        final int howManyLastMinutes = 5;
+        return userRepo.findByLastActiveIsGreaterThanEqual(LocalDateTime.now().minusMinutes(howManyLastMinutes))
+                .stream().map(user -> user.getFullName()).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package cs.densol.back_end.config;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.springframework.lang.NonNullApi;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import cs.densol.back_end.models.User;
+import cs.densol.back_end.repo.IUserRepo;
 import cs.densol.back_end.services.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,6 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final IUserRepo repo;
 
     @Override
     protected void doFilterInternal(
@@ -54,6 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                 userDetails.getAuthorities());
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        this.markWhenLastActive(email);
                     }
 
                 }
@@ -67,4 +72,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private void markWhenLastActive(String email) {
+        User user = repo.findByEmail(email).get();
+        user.setLastActive(LocalDateTime.now());
+        repo.save(user);
+    }
 }
