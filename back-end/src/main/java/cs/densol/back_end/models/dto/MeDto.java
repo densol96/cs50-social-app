@@ -1,6 +1,6 @@
 package cs.densol.back_end.models.dto;
 
 public record MeDto(
-        String email, String fullName) {
+                String email, String username) {
 
 }

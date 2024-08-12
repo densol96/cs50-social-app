@@ -25,7 +25,7 @@ public class BackEndApplication {
 	public CommandLineRunner populateDatabase(IUserRepo userRepo, PasswordEncoder encoder, ITopicRepo topicRepo,
 			IPostRepo postRepo) {
 		return (String... args) -> {
-			User me = new User("Deniss Solovjovs", encoder.encode("password123"),
+			User me = new User("solodeni", encoder.encode("password123"),
 					"solo@deni.com");
 			userRepo.save(me);
 
@@ -61,9 +61,9 @@ public class BackEndApplication {
 				topicRepo.save(topic);
 			}
 
-			User u2 = new User("Man Man", encoder.encode("password123"),
+			User u2 = new User("someman", encoder.encode("password123"),
 					"man@deni.com");
-			User u3 = new User("Guy Guy", encoder.encode("password123"),
+			User u3 = new User("someguy", encoder.encode("password123"),
 					"guy@deni.com");
 			userRepo.saveAll(List.of(u2, u3));
 		};

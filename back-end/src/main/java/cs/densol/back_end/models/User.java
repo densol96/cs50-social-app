@@ -40,9 +40,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Full name must not be blank")
-    @Pattern(regexp = "[A-Z][a-z]{1,15}( [A-Z][a-z]{1,15})?", message = "Full name must match the format")
-    private String fullName;
+    @NotBlank(message = "Username must not be blank / empty")
+    @Pattern(regexp = "[a-z0-9]{4,25}", message = "Username can only contain lwoercase letters and numbers and be 4-25 characters long")
+    private String username;
 
     @NotBlank(message = "Password must not be blank")
     // In DB password will be hashed => leave the regexp for Dto
@@ -61,8 +61,8 @@ public class User implements UserDetails {
 
     private LocalDateTime lastActive;
 
-    public User(String fullName, String encodedPassword, String email) {
-        this.fullName = fullName;
+    public User(String username, String encodedPassword, String email) {
+        this.username = username;
         this.password = encodedPassword;
         this.email = email;
     }
@@ -75,6 +75,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public String getActualUsername() {
+        return username;
     }
 
 }

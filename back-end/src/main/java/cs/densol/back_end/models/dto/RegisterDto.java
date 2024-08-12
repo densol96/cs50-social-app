@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegisterDto(
-		@NotBlank(message = "Full name must not be blank") @Pattern(regexp = "[A-Z][a-z]{1,15}( [A-Z][a-z]{1,15})?", message = "Full name must match the format") String fullName,
+		@NotBlank(message = "Username must not be blank / empty") @Pattern(regexp = "[a-z0-9]{4,25}", message = "Username can only contain lowercase letters and numbers, and be 4-25 characters long") String username,
 
 		@NotBlank(message = "Password must not be blank") @Pattern(regexp = "[A-Za-z0-9!@#$%^&]{8,20}", message = "Password must match the format") String password,
 

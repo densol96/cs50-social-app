@@ -54,7 +54,7 @@ public class AuthServiceImpl implements IAuthService {
 
         User user = new User();
         user.setEmail(data.email());
-        user.setFullName(data.fullName());
+        user.setUsername(data.username());
         user.setPassword(passwordEncoder.encode(data.password()));
         userRepo.save(user);
         return new ResponseDto("You have succefully created the account");
@@ -82,13 +82,13 @@ public class AuthServiceImpl implements IAuthService {
         if (auth == null)
             throw new AppException("This is a protected route", HttpStatus.FORBIDDEN);
         User user = (User) auth.getPrincipal();
-        return new MeDto(user.getEmail(), user.getFullName());
+        return new MeDto(user.getEmail(), user.getActualUsername());
     }
 
     @Override
     public List<String> getCurrentlyActiveUsersNames() {
         final int howManyLastMinutes = 5;
         return userRepo.findByLastActiveIsGreaterThanEqual(LocalDateTime.now().minusMinutes(howManyLastMinutes))
-                .stream().map(user -> user.getFullName()).collect(Collectors.toList());
+                .stream().map(user -> user.getActualUsername()).collect(Collectors.toList());
     }
 }

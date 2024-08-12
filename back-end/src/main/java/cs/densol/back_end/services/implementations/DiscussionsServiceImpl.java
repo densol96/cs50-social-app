@@ -48,7 +48,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
 
     private TopicDto mapTopicToDto(Topic topic) {
 
-        AuthorDto authorDto = new AuthorDto(topic.getAuthor().getFullName(), topic.getAuthor().getEmail());
+        AuthorDto authorDto = new AuthorDto(topic.getAuthor().getActualUsername(), topic.getAuthor().getEmail());
 
         return new TopicDto(
                 topic.getId(),

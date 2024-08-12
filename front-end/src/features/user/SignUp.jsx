@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { redirect, useActionData, useNavigate, useNavigation, useOutletContext } from "react-router-dom";
+import {
+  redirect,
+  useActionData,
+  useNavigate,
+  useNavigation,
+  useOutletContext,
+} from "react-router-dom";
 import styled from "styled-components";
 
 import useMainPageAnimation from "../../hooks/useMainPageAnimation";
@@ -99,12 +105,12 @@ const Rules = styled.div`
 `;
 
 const formFields = {
-  fullName: "fullName",
+  username: "username",
   email: "email",
   password: "password",
   passwordConfirm: "passwordConfirm",
-  checkbox: "agreesToTerms"
-}
+  checkbox: "agreesToTerms",
+};
 
 function SignUp() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -114,17 +120,17 @@ function SignUp() {
   const animationTo = useMainPageAnimation(formElement);
   const actionData = useActionData();
   const displayNotification = useOutletContext();
-  const navigate =  useNavigate();
+  const navigate = useNavigate();
   const [checboxChecked, setCheckboxChecked] = useState(false);
 
-  useEffect(()=> {
+  useEffect(() => {
     let timerId;
-    if(actionData && actionData.notification) {
+    if (actionData && actionData.notification) {
       displayNotification(actionData.message, actionData.status);
-      if(actionData.status === "success") {
+      if (actionData.status === "success") {
         timerId = setTimeout(() => {
           animationTo("/login");
-        }, 2000)
+        }, 2000);
       }
     }
     return () => clearTimeout(timerId);
@@ -134,16 +140,19 @@ function SignUp() {
     <>
       <StyledForm ref={formElement} method="POST">
         <div>
-          <label htmlFor="name">Full Name:</label>
+          <label htmlFor="usernname">Username:</label>
           <input
-            placeholder="Enter your full name"
+            placeholder="Enter a unique username"
             required
-            id="name"
+            id="username"
             type="text"
-            name={formFields.fullName}
+            name={formFields.username}
           />
-          {actionData?.[formFields.fullName] && <p key={new Date()} className="error">{actionData[formFields.fullName]}</p>}
-          
+          {actionData?.[formFields.username] && (
+            <p key={new Date()} className="error">
+              {actionData[formFields.username]}
+            </p>
+          )}
         </div>
         <div>
           <label htmlFor="email">Email:</label>
@@ -154,7 +163,11 @@ function SignUp() {
             id="email"
             name={formFields.email}
           />
-          {actionData?.[formFields.email] && <p key={new Date()} className="error">{actionData[formFields.email]}</p>}
+          {actionData?.[formFields.email] && (
+            <p key={new Date()} className="error">
+              {actionData[formFields.email]}
+            </p>
+          )}
         </div>
         <div>
           <label htmlFor="password">Password:</label>
@@ -165,7 +178,11 @@ function SignUp() {
             id="password"
             name={formFields.password}
           />
-         {actionData?.[formFields.password] && <p key={new Date()} className="error">{actionData[formFields.password]}</p>}
+          {actionData?.[formFields.password] && (
+            <p key={new Date()} className="error">
+              {actionData[formFields.password]}
+            </p>
+          )}
         </div>
         <div>
           <label htmlFor="confirm">Confirm password:</label>
@@ -176,11 +193,21 @@ function SignUp() {
             id="confirm"
             name={formFields.passwordConfirm}
           />
-          {actionData?.[formFields.passwordConfirm] && <p key={new Date()} className="error">{actionData[formFields.passwordConfirm]}</p>}
+          {actionData?.[formFields.passwordConfirm] && (
+            <p key={new Date()} className="error">
+              {actionData[formFields.passwordConfirm]}
+            </p>
+          )}
         </div>
         <div className="terms">
           <div>
-            <input name={formFields.checkbox} id="checkbox" type="checkbox" checked={checboxChecked} onChange={(e) => setCheckboxChecked(e.target.checked)} />
+            <input
+              name={formFields.checkbox}
+              id="checkbox"
+              type="checkbox"
+              checked={checboxChecked}
+              onChange={(e) => setCheckboxChecked(e.target.checked)}
+            />
             <label className="rules-input" htmlFor="checkbox">
               I agree to
               <AnimatedLink onClick={() => setModalOpen(true)} size="medium">
@@ -188,8 +215,12 @@ function SignUp() {
               </AnimatedLink>
             </label>
           </div>
-          {actionData?.[formFields.checkbox] && <p key={new Date()} className="error">{actionData[formFields.checkbox]}</p>}
-          </div>
+          {actionData?.[formFields.checkbox] && (
+            <p key={new Date()} className="error">
+              {actionData[formFields.checkbox]}
+            </p>
+          )}
+        </div>
         <div className="btns">
           <Button disabled={isSubmitting || !checboxChecked}>
             {isSubmitting ? "Loading.." : "Register"}
@@ -226,15 +257,15 @@ export default SignUp;
 
 export async function action({ request }) {
   const data = Object.fromEntries(await request.formData());
-  const actionData = {invalidInput: true};
-  if(!data[formFields.checkbox]) {
+  const actionData = { invalidInput: true };
+  if (!data[formFields.checkbox]) {
     actionData[formFields.checkbox] = "You must agree to terms to continue";
     return actionData;
   }
-  if (data[formFields.password]!== data[formFields.passwordConfirm]) {
+  if (data[formFields.password] !== data[formFields.passwordConfirm]) {
     actionData[formFields.passwordConfirm] = "Passwords do not match";
     return actionData;
   }
-  
+
   return await register(data);
 }
