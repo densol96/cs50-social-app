@@ -3,6 +3,7 @@ import { createGlobalStyle } from "styled-components";
 const GlobalStyles = createGlobalStyle`
 
     :root {
+        --border-radius--tiny: 1.5px;
         --border-radius--small: 3px;
         --border-radius--medium: 7px;
 
@@ -17,6 +18,7 @@ const GlobalStyles = createGlobalStyle`
         --color-red--light: #fca5a5;
         --color-grey: #444;
         --color-grey--light: #555;
+        --color-grey--lightest: #eee;
 
         --color-error-transparent: rgba(109, 49, 49, 0.65);
         --color-success-transparent: rgba(53, 95, 53, 0.65);
@@ -54,6 +56,7 @@ const GlobalStyles = createGlobalStyle`
 
 
         /* SPACINGS */
+        --spacing-xs: 1rem;
         --spacing-s: 2rem;
         --spacing--m: 7.2rem;
         --spacing--l: 9.2rem;
@@ -70,6 +73,7 @@ const GlobalStyles = createGlobalStyle`
 
     html {
         font-size: 62.5%;
+        overflow-x: hidden;
     }
 
     body {
@@ -112,6 +116,14 @@ const GlobalStyles = createGlobalStyle`
         padding:  0.5rem 1.5rem;
         outline: none;
         border: none;
+    }
+
+    .primary-heading {
+        font-size: var(--font-size--l);
+    }
+
+    .tertiary-heading {
+        font-size: var(--font-size--m);
     }
 
     @keyframes moveInFromRight {
@@ -192,7 +204,7 @@ const GlobalStyles = createGlobalStyle`
 
     /* Track (part of the scrollbar not moving) */
     .custom-scrollbar::-webkit-scrollbar {
-    width: 1rem; /* Width of the scrollbar */
+    width: 1.1rem; /* Width of the scrollbar */
     }
 
     /* Handle (part of the scrollbar that moves) */

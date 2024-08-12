@@ -1,6 +1,7 @@
 package cs.densol.back_end.services.implementations;
 
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -10,9 +11,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 
 import cs.densol.back_end.exceptions.AppException;
+import cs.densol.back_end.models.Post;
 import cs.densol.back_end.models.Topic;
 import cs.densol.back_end.models.dto.AuthorDto;
+import cs.densol.back_end.models.dto.PostDto;
 import cs.densol.back_end.models.dto.TopicDto;
+import cs.densol.back_end.repo.IPostRepo;
 import cs.densol.back_end.repo.ITopicRepo;
 import cs.densol.back_end.services.IDiscussionsService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +27,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
 
     private final int RESULTS_PER_PAGE = 5;
     private final ITopicRepo topicRepo;
+    private final IPostRepo postRepo;
 
     @Override
     public List<TopicDto> getAllTopics(Integer page, String searchTitle) {
@@ -63,5 +68,19 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
     @Override
     public Long getPagesNumTotal(String searchTitle) {
         return (long) Math.ceil(topicRepo.countAllByTitleContaining(searchTitle) / (double) (RESULTS_PER_PAGE));
+    }
+
+    @Override
+    public List<PostDto> getPostsForThePost(Integer topicId, Integer page) {
+        if (topicId == null || topicId < 1 || page < 1)
+            throw new AppException("Invalid request parameters", HttpStatus.BAD_REQUEST);
+        page = page == null ? 0 : page - 1;
+        Pageable pageable = PageRequest.of(page, RESULTS_PER_PAGE, Sort.by("createdAt").ascending());
+        return postRepo.findByTopicId(topicId, pageable).stream().map(post -> postToDto(post))
+                .collect(Collectors.toList());
+    }
+
+    private PostDto postToDto(Post post) {
+        return new PostDto();
     }
 }

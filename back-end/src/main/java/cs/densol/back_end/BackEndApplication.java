@@ -53,7 +53,9 @@ public class BackEndApplication {
 			for (int i = 0; i < 10; i++) {
 				Topic topic = new Topic(i < 8 ? "Topic one" : "Anime is nice", me);
 				topicRepo.save(topic);
-				Post p = new Post(me, "jknjknew", topic);
+				Post p = new Post(me,
+						"Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw",
+						topic);
 				postRepo.save(p);
 				topic.setOriginalPost(p);
 				topicRepo.save(topic);

@@ -177,7 +177,7 @@ function Discussions() {
                 {discussions?.length !== 0 && discussions.map(discussion => 
                 <li key={discussion.id}>
                     <article  className="topic">
-                        <h2 className="topic__title">{discussion.title}</h2>
+                        <h2 className="topic__title tertiary-heading">{discussion.title}</h2>
                         <div className="topic__stats">
                             <p>Author: <span className="topic__subheading" >{discussion.author.fullName}</span></p>
                             <p>Total messages: <span className="topic__subheading">{discussion.totalMessages}</span></p>

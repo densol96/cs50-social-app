@@ -21,6 +21,7 @@ import { initApp } from "./features/user/authSlice";
 import AppLayout from "./ui/AppLayout";
 import Discussions, {loader as discussionsLoader} from "./features/discussions/Discussions";
 import Error from "./ui/Error";
+import Topic from "./features/discussions/Topic";
 
 
 const router = createBrowserRouter([
@@ -62,7 +63,13 @@ const router = createBrowserRouter([
         element: <Discussions />,
         loader: discussionsLoader,
         errorElement: <Error />
-      }, 
+      },
+      {
+        path: "discussions/:id",
+        element: <Topic />,
+        // loader: discussionsLoader,
+        errorElement: <Error />
+      },  
       {
         path: "reviews",
         element: <p>HELLO THERE</p>

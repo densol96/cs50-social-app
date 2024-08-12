@@ -28,7 +28,7 @@ public class Post {
     private Integer id;
 
     @NotBlank
-    @Size(min = 5, max = 500, message = "Topic's text should be 5-500 characterslong")
+    @Size(min = 5, max = 1500, message = "Topic's text should be 5-1500 characters long")
     private String text;
 
     @ManyToOne

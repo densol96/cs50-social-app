@@ -15,3 +15,12 @@ export async function getAllDiscussions(page, searchTitle) {
     })
     return {topics: response.data.topics, pagesTotal: response.data.pagesTotal};
 }
+
+export async function getAllTopicMessages(topicId, page) {
+    const response = await axios.get(`${DISCUSSIONS_ENDPOINT}/topics/${topicId}?page=${page || 1}`, {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem("jwt")}`
+        }
+    })
+    return {topics: response.data.topics, pagesTotal: response.data.pagesTotal};
+}
