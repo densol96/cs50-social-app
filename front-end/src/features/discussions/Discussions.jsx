@@ -3,11 +3,12 @@ import StyledForm from "../../ui/StyledForm"
 import Button from "../../ui/Button"
 import AnimatedLink from "../../ui/AnimatedLink"
 import { FaArrowRightToBracket } from "react-icons/fa6";
-import {getAllDiscussions, getAllDiscussionsPageNum} from "../../services/discussionsApi";
-import { useLoaderData } from "react-router-dom";
+import {getAllDiscussions } from "../../services/discussionsApi";
+import { useLoaderData, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import Spinner from "../../ui/Spinner";
 import { useEffect, useState } from "react";
+import ProblemMessage from "../../ui/ProblemMessage";
 
 const StyledDiscussions = styled.div`
 
@@ -120,27 +121,33 @@ function proccessTimestamp(timestamp){
 }
 
 function Discussions() {
-    const {discussionsOnLoad, pagesTotal} = useLoaderData();
+    const {topics, pagesTotal: pagesTotalOnLoad} = useLoaderData();
     const { ref, inView, entry } = useInView();
     const [currentPage, setCurrentPage] = useState(1); 
-    const [discussions, setDiscussions] = useState(discussionsOnLoad);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [discussions, setDiscussions] = useState(topics);
+    const [pagesTotal, setPagesTotal] = useState();
+    const [searchParams] = useSearchParams();
+    const [searchTitle, setSearchTitle] = useState(()=> searchParams.get("searchTitle") || "" );
 
     // errorElement is catching the exceptions, no need for additional error handling in the logic
     useEffect(() => {
         if(inView) {
             (async()=> {
-                const additionalDiscussions = await getAllDiscussions(currentPage + 1);
+                const {topics} = await getAllDiscussions(currentPage + 1, searchTitle);
                 setCurrentPage(currentPage + 1);
-                setDiscussions(state => [...state, ... additionalDiscussions]);
+                setDiscussions(state => [...state, ...topics]);
             })();
         }
     }, [inView]);
 
     useEffect(()=> {
-        setCurrentPage(1);
-        
-    }, [searchQuery]);
+        (async() => {
+            const {topics, pagesTotal} = await getAllDiscussions(1, searchTitle);
+            setCurrentPage(1);
+            setDiscussions(topics);
+            setPagesTotal(pagesTotal);
+        })();
+    }, [searchTitle]);
 
     return <StyledDiscussions>
         <header className="header">
@@ -152,13 +159,13 @@ function Discussions() {
                 </p>
             </section>
             <form className="search" action="">
-                <input onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} placeholder="Search a topic by title..." className="search__input search-input" type="text" />
+                <input onChange={(e) => setSearchTitle(e.target.value)} value={searchTitle} placeholder="Search a topic by title..." className="search__input search-input" type="text" />
                 <Button size="small">Create a topic</Button>
             </form>
         </header>
         <section className="topics">
             <ul className="topics__list">
-                {discussions?.length === 0 && <p>There are no any discussions at present</p> }
+                {discussions?.length === 0 && <ProblemMessage>There are no any discussions at present 😥</ProblemMessage> }
                 {discussions?.length !== 0 && discussions.map(discussion => 
                 <li key={discussion.id}>
                     <article  className="topic">
@@ -187,10 +194,9 @@ function Discussions() {
 
 export default Discussions;
 
-export function loader() {
+export async function loader({request}) {
     const page = 1;
-    return Promise.all([getAllDiscussions(page), getAllDiscussionsPageNum()]).then(data => {
-        const [discussionsOnLoad, pagesTotal] = data;
-        return { discussionsOnLoad, pagesTotal };
-    });
+    const url = new URL(request.url);
+    const searchTitle = url.searchParams.get("searchTitle");
+    return await getAllDiscussions(page, searchTitle);
 }

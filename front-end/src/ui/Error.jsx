@@ -25,8 +25,6 @@ function Error() {
 
     const error = useRouteError();
 
-    console.log("LOG ERROR ---> ", error);
-
     return (
         <StyledError>
             <p className="smile">🤕</p>
