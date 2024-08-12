@@ -184,6 +184,33 @@ const GlobalStyles = createGlobalStyle`
             transform: rotate(360deg);
         }
     }
+
+    // SCROLL-BAR
+    /* The container that will have a custom scrollbar */
+    .custom-scrollbar {
+    }
+
+    /* Track (part of the scrollbar not moving) */
+    .custom-scrollbar::-webkit-scrollbar {
+    width: 1rem; /* Width of the scrollbar */
+    }
+
+    /* Handle (part of the scrollbar that moves) */
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--color-black--light); /* Color of the scrollbar handle */
+        border-radius: 10px; /* Roundness of the scrollbar handle */
+    }
+
+    /* Handle on hover */
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Color of the scrollbar handle on hover */
+    }
+
+    /* Track */
+    .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* Color of the track */
+    border-radius: 10px; /* Roundness of the track */
+    }
 `;
 
 export default GlobalStyles;

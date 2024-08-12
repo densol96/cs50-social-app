@@ -107,6 +107,13 @@ const StyledDiscussions = styled.div`
                 display: flex;
                 align-items: center;
             }
+
+            &__description {
+                display: flex;
+                flex-direction: column;
+                height: 10rem;
+                overflow-y: auto;
+            }
         }
     }
 
@@ -177,7 +184,7 @@ function Discussions() {
                             <p>Created: <span className="topic__subheading">{proccessTimestamp(discussion.createdAt)}</span></p>
                             <p>Last updated: <span className="topic__subheading">{proccessTimestamp(discussion.updatedAt)}</span></p>
                         </div>
-                        <p className="topic__description"><span className="topic__subheading">Discussion:</span> <span>{discussion.originalPost}</span></p>
+                        <p className="topic__description custom-scrollbar"><span className="topic__subheading">Discussion:</span> <span>{discussion.originalPost}</span></p>
                         <p className="topic__link">
                             <AnimatedLink size="medium" to={`/app/discussions/${discussion.id}`}>
                                 Open the topic <span className="topic__icon"><FaArrowRightToBracket/></span>
