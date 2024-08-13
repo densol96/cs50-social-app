@@ -8,8 +8,11 @@ import Button from "../../ui/Button";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useRef, useState } from "react";
 import {
+  Form,
   Link,
+  redirect,
   useActionData,
+  useFetcher,
   useLoaderData,
   useNavigate,
   useOutlet,
@@ -214,10 +217,15 @@ const StyledTopic = styled.div`
       }
     }
   }
+
+  .error {
+    margin-bottom: 1rem;
+  }
 `;
 import { BiSkipNext } from "react-icons/bi";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
-import { getPostsPerTopic } from "../../services/discussionsApi";
+import { getPostsPerTopic, publishPost } from "../../services/discussionsApi";
+import StyledForm from "../../ui/StyledForm";
 
 function Topic() {
   const { ref, inView, entry } = useInView();
@@ -244,6 +252,19 @@ function Topic() {
   useEffect(() => {
     mainElementInDom?.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
+
+  const actionFeedback = useActionData();
+
+  const publishedPost = searchParams.get("publishedPost");
+  useEffect(() => {
+    setTimeout(() => {
+      if (publishedPost) {
+        document
+          .getElementById(`${publishedPost}`)
+          .scrollIntoView({ behavior: "smooth" });
+      }
+    }, 500); //500ms tso the user can notice the transition: top first, then down to the post
+  }, [publishedPost]);
 
   return (
     <StyledTopic>
@@ -313,7 +334,7 @@ function Topic() {
             </li>
           ))}
         </ul>
-        <div className="editor">
+        <Form method="post" className="editor">
           <h2 className="tertiary-heading">Write a reply:</h2>
           <div className="editor__area">
             <div className="line">
@@ -321,10 +342,16 @@ function Topic() {
               <CiTextAlignJustify />
               <CiTextAlignRight />
             </div>
-            <textarea className="text-input-area" />
+            <textarea name="text" className="text-input-area" />
+            <input type="hidden" value={id} name="topicId" />
           </div>
-          <Button>Post message</Button>
-        </div>
+          <div>
+            {actionFeedback?.inputError && (
+              <p className="error">{actionFeedback.message}</p>
+            )}
+            <Button>Post message</Button>
+          </div>
+        </Form>
       </div>
     </StyledTopic>
   );
@@ -338,9 +365,18 @@ export async function loader({ params, request }) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   return await getPostsPerTopic(topicId, page);
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     getPostsPerTopic(topicId, page).then((data) => resolve(data));
-  //   }, 3000);
-  // });
+}
+
+export async function action({ request }) {
+  const { text, topicId } = Object.fromEntries(await request.formData());
+  if (!text || text.length < 5 || text.legnth > 1500) {
+    return {
+      inputError: true,
+      message: "Invalid text input format: it should be 5-1500 characters long",
+    };
+  }
+  const { pagesTotal, postId } = await publishPost(topicId, text);
+  return redirect(
+    `/app/discussions/${topicId}?page=${pagesTotal}&publishedPost=${postId}`
+  );
 }

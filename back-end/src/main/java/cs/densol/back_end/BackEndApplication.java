@@ -25,10 +25,12 @@ public class BackEndApplication {
 	public CommandLineRunner populateDatabase(IUserRepo userRepo, PasswordEncoder encoder, ITopicRepo topicRepo,
 			IPostRepo postRepo) {
 		return (String... args) -> {
+			// Create a user
 			User me = new User("solodeni", encoder.encode("password123"),
 					"solo@deni.com");
 			userRepo.save(me);
 
+			// 1 topic + 1 original post
 			Topic newTopic = new Topic("My first thread", me);
 			topicRepo.save(newTopic);
 			Post postOne = new Post(me, "Hello, I am looking for friends!", newTopic);
@@ -36,29 +38,39 @@ public class BackEndApplication {
 			newTopic.setOriginalPost(postOne);
 			topicRepo.save(newTopic);
 
+			// 2 more posts added
 			Post postTwo = new Post(me, "I can be your friend!!", newTopic);
 			Post postThree = new Post(me, "And me too!!", newTopic);
 			newTopic.addPost(postTwo);
 			newTopic.addPost(postThree);
 			topicRepo.save(newTopic);
 
-			// Additional topics
-			Topic t1 = new Topic("Davidka", me);
-			topicRepo.save(t1);
-			Post p1 = new Post(me, "jknjknew", t1);
-			postRepo.save(p1);
-			t1.setOriginalPost(p1);
-			topicRepo.save(t1);
-
+			// Generate more topic and posts
 			for (int i = 0; i < 10; i++) {
+				// Create a topic + original post
 				Topic topic = new Topic(i < 8 ? "Topic one" : "Anime is nice", me);
 				topicRepo.save(topic);
 				Post p = new Post(me,
-						"Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw Hebbwekj erwkrejwrkjhwerkjhr erkjerhkjwehrkjwherjkh rewjknrjkwberkjwbejkr jklwenrkjwerjkwenrjkwebrkjwebrkjwebrkjweb  ewrkwekjrewjkrbjkwebrm ewjkbrkjwbrjkbwerjkbwekjr kjewrnwjkrbjkwebrkjw",
+						"Has anyone tried the new software update? I'm noticing a significant improvement in performance, but still encountering some minor bugs. Curious to hear your thoughts!",
 						topic);
 				postRepo.save(p);
 				topic.setOriginalPost(p);
 				topicRepo.save(topic);
+				if (i < 5) {
+					for (int j = 0; j < 6; j++) {
+						Post posty = new Post(me,
+								"Has anyone tried the new software update? I'm noticing a significant improvement in performance, but still encountering some minor bugs. Curious to hear your thoughts!",
+								topic);
+						postRepo.save(posty);
+					}
+				} else {
+					for (int j = 0; j < 12; j++) {
+						Post posty = new Post(me,
+								"Has anyone tried the new software update? I'm noticing a significant improvement in performance, but still encountering some minor bugs. Curious to hear your thoughts!",
+								topic);
+						postRepo.save(posty);
+					}
+				}
 			}
 
 			User u2 = new User("someman", encoder.encode("password123"),

@@ -23,7 +23,10 @@ import Discussions, {
   loader as discussionsLoader,
 } from "./features/discussions/Discussions";
 import Error from "./ui/Error";
-import Topic, { loader as topicLoader } from "./features/discussions/Topic";
+import Topic, {
+  loader as topicLoader,
+  action as topicAction,
+} from "./features/discussions/Topic";
 
 const router = createBrowserRouter([
   {
@@ -70,6 +73,7 @@ const router = createBrowserRouter([
         element: <Topic />,
         loader: topicLoader,
         errorElement: <Error display={true} />,
+        action: topicAction,
       },
       {
         path: "reviews",

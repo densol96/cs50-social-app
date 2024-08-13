@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -16,7 +18,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -61,6 +62,10 @@ public class User implements UserDetails {
 
     private LocalDateTime lastActive;
 
+    @Min(value = 0, message = "Total posts number cannot be a negative value")
+    @Max(value = 50000, message = "Total posts number is unlikely to be more than 50000")
+    private Integer postsTotal = 0;
+
     public User(String username, String encodedPassword, String email) {
         this.username = username;
         this.password = encodedPassword;
@@ -79,6 +84,10 @@ public class User implements UserDetails {
 
     public String getActualUsername() {
         return username;
+    }
+
+    public void incrementPostsTotal() {
+        postsTotal++;
     }
 
 }

@@ -77,11 +77,16 @@ public class AuthServiceImpl implements IAuthService {
     }
 
     @Override
-    public MeDto getMe() {
+    public User extractUserFromCurrentRequest() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null)
             throw new AppException("This is a protected route", HttpStatus.FORBIDDEN);
-        User user = (User) auth.getPrincipal();
+        return (User) auth.getPrincipal();
+    }
+
+    @Override
+    public MeDto getMe() {
+        User user = extractUserFromCurrentRequest();
         return new MeDto(user.getEmail(), user.getActualUsername());
     }
 

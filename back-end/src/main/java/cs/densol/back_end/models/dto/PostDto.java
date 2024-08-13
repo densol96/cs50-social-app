@@ -1,11 +1,13 @@
 package cs.densol.back_end.models.dto;
 
-public record PostDto() {
+import java.time.LocalDateTime;
+
+public record PostDto(
+        Integer postId,
+        String authorUsername,
+        LocalDateTime authorJoinDateTime,
+        Integer authorTotalMessages,
+        String postText,
+        LocalDateTime postedDate) {
 
 }
-// userName
-// totalMessages
-// joined
-// poctCreated
-// postText
-// topicName

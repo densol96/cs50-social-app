@@ -131,6 +131,17 @@ const GlobalStyles = createGlobalStyle`
         font-size: var(--font-size--m);
     }
 
+    .error {
+        width: 100%;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--color-red);
+        padding: 0.5rem 0.5rem 0;
+        text-align: center;
+        animation-name: shakeUpAndDown;
+        animation-duration: 500ms;
+    }
+
     @keyframes moveInFromRight {
         0% {
             transform: translateX(20%);

@@ -1,7 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "./LoadingPage";
 import { useEffect, useRef } from "react";
-import { NavLink, Outlet, useNavigate, useNavigation } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useFetcher,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import styled from "styled-components";
 import { logout as logoutAction } from "../features/user/authSlice";
 
@@ -140,11 +146,18 @@ const StyledNavLink = styled(NavLink)`
 
 function AppLayout() {
   const { authenticated, user } = useSelector((state) => state.auth);
-  const fullName = user?.fullName;
   const navigate = useNavigate();
 
   const navigation = useNavigation();
   const isLoading = navigation.state === "loading";
+  const fetcher = useFetcher();
+
+  console.log(
+    "navigation state -> ",
+    navigation.state,
+    "fetcher state --> ",
+    fetcher.state
+  );
 
   const dispatch = useDispatch();
   const mainContainerInDOM = useRef();
