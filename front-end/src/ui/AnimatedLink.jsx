@@ -31,6 +31,21 @@ const sizes = {
       width: 102%;
     }
   `,
+
+  large: css`
+    font-weight: 600;
+    font-size: 2rem;
+
+    &::after {
+      height: 1.5px;
+      bottom: -2px;
+      left: -2px;
+    }
+
+    &:hover::after {
+      width: 102%;
+    }
+  `,
 };
 
 const colors = {

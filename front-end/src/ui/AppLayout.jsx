@@ -106,7 +106,7 @@ const StyledAppLayout = styled.div`
 
         span {
           &:hover {
-            color: #ececd0;
+            color: var(--color-yellow--light);
             cursor: pointer;
           }
         }

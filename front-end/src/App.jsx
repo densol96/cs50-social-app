@@ -16,13 +16,14 @@ import ForgotPassword, {
 } from "./features/user/ForgotPassword";
 import LoadingPage from "./ui/LoadingPage";
 import { useEffect } from "react";
-import { authenticate } from "./services/authApi"; 
+import { authenticate } from "./services/authApi";
 import { initApp } from "./features/user/authSlice";
 import AppLayout from "./ui/AppLayout";
-import Discussions, {loader as discussionsLoader} from "./features/discussions/Discussions";
+import Discussions, {
+  loader as discussionsLoader,
+} from "./features/discussions/Discussions";
 import Error from "./ui/Error";
-import Topic from "./features/discussions/Topic";
-
+import Topic, { loader as topicLoader } from "./features/discussions/Topic";
 
 const router = createBrowserRouter([
   {
@@ -62,39 +63,54 @@ const router = createBrowserRouter([
         path: "discussions",
         element: <Discussions />,
         loader: discussionsLoader,
-        errorElement: <Error />
+        errorElement: <Error />,
       },
       {
         path: "discussions/:id",
         element: <Topic />,
-        // loader: discussionsLoader,
-        errorElement: <Error />
-      },  
+        loader: topicLoader,
+        errorElement: <Error display={true} />,
+      },
       {
         path: "reviews",
-        element: <p>HELLO THERE</p>
-      }
-    ]
-  }
+        element: <p>HELLO THERE</p>,
+      },
+    ],
+  },
 ]);
 
 function App() {
   const dispatch = useDispatch();
-  let {jwt , authenticated, serverCalled, user} = useSelector((state) => state.auth);
+  let { jwt, authenticated, serverCalled, user } = useSelector(
+    (state) => state.auth
+  );
   useEffect(() => {
-    if(jwt) localStorage.setItem("jwt", jwt); // synchronise with logging out
-    if(!jwt) {
-      setTimeout(()=> {
-        dispatch(initApp({authenticated: false, serverCalled: true, user: undefined}));
-      }, 1500)
-    } 
-    else {
+    if (jwt) localStorage.setItem("jwt", jwt); // synchronise with logging out
+    if (!jwt) {
+      setTimeout(() => {
+        dispatch(
+          initApp({ authenticated: false, serverCalled: true, user: undefined })
+        );
+      }, 1500);
+    } else {
       async function callServerForAuth() {
         try {
-          const {email, fullName} = await authenticate(jwt);
-          dispatch(initApp({authenticated: true, serverCalled: true, user: {email, fullName}}));
-        } catch(e) {
-          dispatch(initApp({authenticated: false, serverCalled: true, user: undefined}));
+          const { email, fullName } = await authenticate(jwt);
+          dispatch(
+            initApp({
+              authenticated: true,
+              serverCalled: true,
+              user: { email, fullName },
+            })
+          );
+        } catch (e) {
+          dispatch(
+            initApp({
+              authenticated: false,
+              serverCalled: true,
+              user: undefined,
+            })
+          );
         }
       }
       callServerForAuth();

@@ -7,7 +7,15 @@ import {
 import Button from "../../ui/Button";
 import { useInView } from "react-intersection-observer";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
+import { formattedDateTime, formattedDate } from "../../helpers/helpers";
 
 const StyledTopic = styled.div`
   .container {
@@ -23,7 +31,7 @@ const StyledTopic = styled.div`
 
   .post {
     background-color: var(--color-grey);
-    padding: 6rem 3rem 9rem;
+    padding: 6rem 3rem 6rem;
 
     &:first-of-type {
       border-top-left-radius: var(--border-radius--medium);
@@ -34,6 +42,7 @@ const StyledTopic = styled.div`
       padding-bottom: 10.5rem;
       border-bottom-left-radius: 175px;
       border-bottom-right-radius: 175px;
+      padding-bottom: 9em;
     }
 
     &:not(:last-child) {
@@ -73,15 +82,20 @@ const StyledTopic = styled.div`
 
     .main-content {
       display: flex;
-      gap: 3rem;
+      gap: 10rem;
 
       .author {
         width: 20rem;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
         align-items: center;
+
+        &__username {
+          font-weight: 600;
+          font-size: 2rem;
+        }
 
         .avatar {
           width: 10rem;
@@ -106,6 +120,7 @@ const StyledTopic = styled.div`
     flex-direction: column;
 
     &__area {
+      margin-top: 3rem;
       box-shadow: var(--shadow-dark--light);
       margin-bottom: 3rem;
       border-radius: var(--border-radius--tiny);
@@ -174,6 +189,10 @@ const StyledTopic = styled.div`
         align-items: center;
         color: inherit;
 
+        &:hover {
+          color: var(--color-yellow--light);
+        }
+
         &.increase-more {
           font-size: 4rem;
         }
@@ -195,16 +214,28 @@ const StyledTopic = styled.div`
 `;
 import { BiSkipNext } from "react-icons/bi";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
+import { getPostsPerTopic } from "../../services/discussionsApi";
 
 function Topic() {
   const { ref, inView, entry } = useInView();
   const [fixedNow, setFixedNow] = useState(false);
+  const navigate = useNavigate();
+  const { posts, pagesTotal } = useLoaderData();
+  const { id } = useParams();
+
+  const [searchParams] = useSearchParams();
+  const page = +searchParams.get("page") || 1;
 
   useEffect(() => {
     setFixedNow(!inView);
   }, [inView]);
 
-  console.log(fixedNow);
+  useEffect(() => {
+    console.log("I RUN ON MOUNT");
+    if (posts.length === 0) {
+      navigate(`/app/discussions/${id}?page=${pagesTotal}`);
+    }
+  }, []);
 
   return (
     <StyledTopic>
@@ -212,243 +243,70 @@ function Topic() {
         <h1 className="topic-title secondary-heading">Hello everyone!</h1>
         <nav className={`pagination ${fixedNow ? "fixed" : ""}`}>
           <h3 className="pagination__header">Current page: </h3>
-          <Link className="rotate icon">
-            <TbPlayerTrackNextFilled />
-          </Link>
-          <Link className="rotate icon increase-more">
-            <BiSkipNext />
-          </Link>
-          <span>2</span>
-          <Link className="icon increase-more">
-            <BiSkipNext />
-          </Link>
-          <Link className="icon">
-            <TbPlayerTrackNextFilled />
-          </Link>
+          {page > 2 && (
+            <Link to="/app/discussions/11?page=1" className="rotate icon">
+              <TbPlayerTrackNextFilled />
+            </Link>
+          )}
+          {page > 1 && (
+            <Link
+              to={`/app/discussions/11?page=${page - 1}`}
+              className="rotate icon increase-more"
+            >
+              <BiSkipNext />
+            </Link>
+          )}
+          <span>{page}</span>
+          {page < pagesTotal && (
+            <Link
+              to={`/app/discussions/11?page=${page + 1}`}
+              className="icon increase-more"
+            >
+              <BiSkipNext />
+            </Link>
+          )}
+          {page < pagesTotal - 1 && (
+            <Link
+              to={`/app/discussions/11?page=${pagesTotal}`}
+              className="icon"
+            >
+              <TbPlayerTrackNextFilled />
+            </Link>
+          )}
         </nav>
       </header>
 
       <div className="container">
         <ul className="posts">
-          <li className="post">
-            <article>
-              <header className="post-header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
+          {posts.map((post) => (
+            <li key={post.postId} id={post.postId} className="post">
+              <article>
+                <header className="post-header">
+                  <p className="timestamp">
+                    {formattedDateTime(post.postedDate)}
                   </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  <button>Prev</button>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
-          <li className="post">
-            <article>
-              <header className="header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
-                  </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
-          <li className="post">
-            <article>
-              <header className="header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
-                  </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
-          <li className="post">
-            <article>
-              <header className="header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
-                  </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
-          <li className="post">
-            <article>
-              <header className="header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
-                  </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
-          <li className="post">
-            <article>
-              <header className="header">
-                <p className="timestamp">09/07/2024 16:23</p>
-              </header>
-              <div className="main-content">
-                <aside className="author">
-                  <img className="avatar" src="/avatar.jpg" alt="avatar" />
-                  <p className="join-date">
-                    <span className="sub-heading">Joined: </span>09 07 2024
-                  </p>
-                  <p className="messages-total">
-                    <span className="sub-heading">Total messages: </span> {`26`}
-                  </p>
-                </aside>
-                <section className="post-text">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  quas reiciendis quasi sunt quam quibusdam rem doloremque
-                  exercitationem rerum non, laboriosam sint, iure blanditiis,
-                  aperiam similique nam quis? Soluta, assumenda. Commodi ipsum
-                  beatae voluptates. Amet quo dolor, autem possimus, reiciendis
-                  ab reprehenderit tenetur provident distinctio vel nisi illum,
-                  cupiditate ipsam nesciunt rem nostrum quidem? Ducimus fugiat
-                  atque doloremque eos commodi! Lorem ipsum dolor sit amet
-                  consectetur adipisicing elit. Ab quas reiciendis quasi sunt
-                  quam quibusdam rem doloremque exercitationem rerum non,
-                  laboriosam sint, iure blanditiis, aperiam similique nam quis?
-                  Soluta, assumenda. Commodi ipsum beatae voluptates. Amet quo
-                  dolor, autem possimus, reiciendis ab reprehenderit tenetur
-                  provident distinctio vel nisi illum, cupiditate ipsam nesciunt
-                  rem nostrum quidem? Ducimus fugiat atque doloremque eos
-                  commodi
-                </section>
-              </div>
-            </article>
-          </li>
+                </header>
+                <div className="main-content">
+                  <aside className="author">
+                    <p className="author__username">{post.authorUsername}</p>
+                    <img className="avatar" src="/avatar.jpg" alt="avatar" />
+                    <p className="join-date">
+                      <span className="sub-heading">Joined: </span>
+                      {formattedDate(post.authorJoinDateTime)}
+                    </p>
+                    <p className="messages-total">
+                      <span className="sub-heading">Total messages: </span>{" "}
+                      {post.authorTotalMessages}
+                    </p>
+                  </aside>
+                  <section className="post-text">{post.postText}</section>
+                </div>
+              </article>
+            </li>
+          ))}
         </ul>
         <div className="editor">
+          <h2 className="tertiary-heading">Write a reply:</h2>
           <div className="editor__area">
             <div className="line">
               <CiTextAlignLeft />
@@ -466,4 +324,10 @@ function Topic() {
 
 export default Topic;
 
-export async function action() {}
+export async function loader({ params, request }) {
+  const topicId = +params.id;
+  if (topicId < 1) throw new Error("Invalid topicId argument ( <0)");
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  return await getPostsPerTopic(topicId, page);
+}

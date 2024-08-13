@@ -19,6 +19,7 @@ const GlobalStyles = createGlobalStyle`
         --color-grey: #444;
         --color-grey--light: #555;
         --color-grey--lightest: #eee;
+        --color-yellow--light: #ececd0;
 
         --color-error-transparent: rgba(109, 49, 49, 0.65);
         --color-success-transparent: rgba(53, 95, 53, 0.65);
@@ -119,6 +120,10 @@ const GlobalStyles = createGlobalStyle`
     }
 
     .primary-heading {
+        font-size: var(--font-size--xl);
+    }
+
+    .secondary-heading {
         font-size: var(--font-size--l);
     }
 
