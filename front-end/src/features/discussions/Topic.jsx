@@ -12,6 +12,8 @@ import {
   useActionData,
   useLoaderData,
   useNavigate,
+  useOutlet,
+  useOutletContext,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -173,6 +175,7 @@ const StyledTopic = styled.div`
       align-items: center;
       color: white;
       gap: 0.5rem;
+      z-index: 9999;
 
       &__header {
         margin-right: 3rem;
@@ -226,16 +229,21 @@ function Topic() {
   const [searchParams] = useSearchParams();
   const page = +searchParams.get("page") || 1;
 
+  const mainElementInDom = useOutletContext();
+
   useEffect(() => {
     setFixedNow(!inView);
   }, [inView]);
 
   useEffect(() => {
-    console.log("I RUN ON MOUNT");
     if (posts.length === 0) {
       navigate(`/app/discussions/${id}?page=${pagesTotal}`);
     }
   }, []);
+
+  useEffect(() => {
+    mainElementInDom?.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
 
   return (
     <StyledTopic>
@@ -330,4 +338,9 @@ export async function loader({ params, request }) {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   return await getPostsPerTopic(topicId, page);
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     getPostsPerTopic(topicId, page).then((data) => resolve(data));
+  //   }, 3000);
+  // });
 }

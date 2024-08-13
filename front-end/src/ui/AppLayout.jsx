@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import LoadingPage from "./LoadingPage";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { NavLink, Outlet, useNavigate, useNavigation } from "react-router-dom";
 import styled from "styled-components";
 import { logout as logoutAction } from "../features/user/authSlice";
@@ -147,6 +147,7 @@ function AppLayout() {
   const isLoading = navigation.state === "loading";
 
   const dispatch = useDispatch();
+  const mainContainerInDOM = useRef();
 
   useEffect(() => {
     if (!authenticated) {
@@ -226,7 +227,10 @@ function AppLayout() {
           </div>
         </footer>
       </sidebar>
-      <main>{isLoading ? <LoadingPage inApp={true} /> : <Outlet />}</main>
+      <main ref={mainContainerInDOM}>
+        {isLoading && <LoadingPage inApp={true} />}
+        <Outlet context={mainContainerInDOM} />
+      </main>
     </StyledAppLayout>
   );
 }
