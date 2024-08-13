@@ -4,13 +4,18 @@ import Button from "../../ui/Button";
 import AnimatedLink from "../../ui/AnimatedLink";
 import { FaArrowRightToBracket } from "react-icons/fa6";
 import { getAllDiscussions } from "../../services/discussionsApi";
-import { useLoaderData, useSearchParams } from "react-router-dom";
+import { Form, useLoaderData, useSearchParams } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import Spinner from "../../ui/Spinner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProblemMessage from "../../ui/ProblemMessage";
 import { getActiveUsers } from "../../services/authApi";
 import { formattedDateTime } from "../../helpers/helpers";
+import {
+  CiTextAlignLeft,
+  CiTextAlignJustify,
+  CiTextAlignRight,
+} from "react-icons/ci";
 
 const StyledDiscussions = styled.div`
   display: flex;
@@ -119,6 +124,68 @@ const StyledDiscussions = styled.div`
     text-align: center;
     margin-top: 3rem;
   }
+
+  .editor {
+    background-color: var(--color-grey--light);
+    padding: 6rem 10%;
+    border-bottom-left-radius: var(--border-radius--medium);
+    border-bottom-right-radius: var(--border-radius--medium);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+
+    &__area {
+      margin-top: 3rem;
+      box-shadow: var(--shadow-dark--light);
+      margin-bottom: 3rem;
+      border-radius: var(--border-radius--tiny);
+
+      .line {
+        background-color: #fed7aa6c;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        font-size: 2rem;
+      }
+
+      .text-input-area {
+        min-height: 20rem;
+        display: block;
+
+        border: none;
+        resize: none;
+        padding: 1rem;
+        font-family: inherit;
+        font-size: inherit;
+        color: var(--color-grey);
+        width: 100%;
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    button {
+      align-self: center;
+    }
+  }
+
+  .form-container {
+    overflow-y: hidden;
+    transition: all 500ms ease-out;
+    border-radius: var(--border-radius--medium);
+  }
+
+  .name-topic-text-input {
+    font-family: inherit;
+    font-size: 1.6rem;
+    padding: 1rem 0.5rem;
+    margin-top: 1.5rem;
+    color: var(--color-grey);
+    outline: none;
+  }
 `;
 
 function Discussions() {
@@ -155,6 +222,9 @@ function Discussions() {
     })();
   }, [searchTitle]);
 
+  const createTopicSection = useRef();
+  const [formOpen, setFormOpen] = useState(false);
+
   return (
     <StyledDiscussions>
       <header className="header">
@@ -180,9 +250,48 @@ function Discussions() {
             className="search__input search-input"
             type="text"
           />
-          <Button size="small">Create a topic</Button>
+          <Button size="small" onClick={() => setFormOpen(!formOpen)}>
+            {formOpen ? `Hide editor` : `Create a topic`}
+          </Button>
         </form>
       </header>
+      <section
+        ref={createTopicSection}
+        className={`create-topic form-container`}
+        style={
+          formOpen
+            ? { height: createTopicSection.current.scrollHeight }
+            : { height: 0 }
+        }
+      >
+        <Form method="post" className={`editor `}>
+          <h2 className="tertiary-heading">Create a new topic:</h2>
+          <input
+            className="name-topic-text-input"
+            type="text"
+            placeholder="Name a topic"
+          />
+          <div className="editor__area">
+            <div className="line">
+              <CiTextAlignLeft />
+              <CiTextAlignJustify />
+              <CiTextAlignRight />
+            </div>
+            <textarea
+              placeholder="Compose a message"
+              name="text"
+              className="text-input-area"
+            />
+            <input type="hidden" name="topicId" />
+          </div>
+          <div>
+            {/* {actionFeedback?.inputError && (
+              <p className="error">{actionFeedback.message}</p>
+            )} */}
+            <Button>Post message</Button>
+          </div>
+        </Form>
+      </section>
       <section className="topics">
         <ul className="topics__list">
           {discussions?.length === 0 && (

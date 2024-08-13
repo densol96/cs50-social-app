@@ -250,10 +250,12 @@ function Topic() {
   }, []);
 
   useEffect(() => {
-    mainElementInDom?.current?.scrollTo({ top: 0, behavior: "smooth" });
+    mainElementInDom?.current?.scrollTo({ top: 0 });
   }, [page]);
 
   const actionFeedback = useActionData();
+
+  const textarea = useRef();
 
   const publishedPost = searchParams.get("publishedPost");
   useEffect(() => {
@@ -263,7 +265,9 @@ function Topic() {
           .getElementById(`${publishedPost}`)
           .scrollIntoView({ behavior: "smooth" });
       }
-    }, 500); //500ms tso the user can notice the transition: top first, then down to the post
+      textarea.current.value = "";
+    }, 500);
+    //500ms tso the user can notice the transition: top first, then down to the post
   }, [publishedPost]);
 
   return (
@@ -342,7 +346,7 @@ function Topic() {
               <CiTextAlignJustify />
               <CiTextAlignRight />
             </div>
-            <textarea name="text" className="text-input-area" />
+            <textarea ref={textarea} name="text" className="text-input-area" />
             <input type="hidden" value={id} name="topicId" />
           </div>
           <div>
