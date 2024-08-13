@@ -1,5 +1,6 @@
 package cs.densol.back_end.services.implementations;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import cs.densol.back_end.models.dto.PublishedPostDto;
 import cs.densol.back_end.models.dto.TopicDto;
 import cs.densol.back_end.repo.IPostRepo;
 import cs.densol.back_end.repo.ITopicRepo;
+import cs.densol.back_end.repo.IUserRepo;
 import cs.densol.back_end.services.IAuthService;
 import cs.densol.back_end.services.IDiscussionsService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
     private final ITopicRepo topicRepo;
     private final IPostRepo postRepo;
     private final IAuthService authService;
+    private final IUserRepo userRepo;
 
     @Override
     public List<TopicDto> getAllTopics(Integer page, String searchTitle) {
@@ -113,6 +116,10 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
         User postAuthor = authService.extractUserFromCurrentRequest();
         Post newPost = new Post(postAuthor, text, topic);
         postRepo.save(newPost);
+        postAuthor.incrementPostsTotal();
+        userRepo.save(postAuthor);
+        topic.setUpdatedAt(LocalDateTime.now());
+        topicRepo.save(topic);
         /*
          * I want to send back the totalPageNum as it might have changed by adding a new
          * post
@@ -121,5 +128,18 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
          */
         return new PublishedPostDto(newPost.getId(), getPagesNumPerTopic(topicId));
 
+    }
+
+    @Override
+    public void createNewTopic(String title, String text) {
+        User topicAuthor = authService.extractUserFromCurrentRequest();
+        Topic newTopic = new Topic(title, topicAuthor);
+        topicRepo.save(newTopic);
+        Post originalPost = new Post(topicAuthor, text, newTopic);
+        postRepo.save(originalPost);
+        newTopic.setOriginalPost(originalPost);
+        topicRepo.save(newTopic);
+        topicAuthor.incrementPostsTotal();
+        userRepo.save(topicAuthor);
     }
 }

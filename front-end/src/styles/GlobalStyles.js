@@ -6,6 +6,7 @@ const GlobalStyles = createGlobalStyle`
         --border-radius--tiny: 1.5px;
         --border-radius--small: 3px;
         --border-radius--medium: 7px;
+        --border-radius--large: 20px;
 
         --color-black: black;
         --color-black--medium: rgb(22, 24, 29);

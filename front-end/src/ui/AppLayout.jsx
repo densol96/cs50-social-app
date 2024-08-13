@@ -152,13 +152,6 @@ function AppLayout() {
   const isLoading = navigation.state === "loading";
   const fetcher = useFetcher();
 
-  console.log(
-    "navigation state -> ",
-    navigation.state,
-    "fetcher state --> ",
-    fetcher.state
-  );
-
   const dispatch = useDispatch();
   const mainContainerInDOM = useRef();
 

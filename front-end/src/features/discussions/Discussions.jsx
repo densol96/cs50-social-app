@@ -3,8 +3,16 @@ import StyledForm from "../../ui/StyledForm";
 import Button from "../../ui/Button";
 import AnimatedLink from "../../ui/AnimatedLink";
 import { FaArrowRightToBracket } from "react-icons/fa6";
-import { getAllDiscussions } from "../../services/discussionsApi";
-import { Form, useLoaderData, useSearchParams } from "react-router-dom";
+import {
+  getAllDiscussions,
+  createNewTopic,
+} from "../../services/discussionsApi";
+import {
+  Form,
+  useFetcher,
+  useLoaderData,
+  useSearchParams,
+} from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import Spinner from "../../ui/Spinner";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +24,7 @@ import {
   CiTextAlignJustify,
   CiTextAlignRight,
 } from "react-icons/ci";
+import Switch from "../../ui/Switch";
 
 const StyledDiscussions = styled.div`
   display: flex;
@@ -137,7 +146,6 @@ const StyledDiscussions = styled.div`
     &__area {
       margin-top: 3rem;
       box-shadow: var(--shadow-dark--light);
-      margin-bottom: 3rem;
       border-radius: var(--border-radius--tiny);
 
       .line {
@@ -169,6 +177,7 @@ const StyledDiscussions = styled.div`
 
     button {
       align-self: center;
+      margin-top: 3rem;
     }
   }
 
@@ -176,12 +185,13 @@ const StyledDiscussions = styled.div`
     overflow-y: hidden;
     transition: all 500ms ease-out;
     border-radius: var(--border-radius--medium);
+    box-shadow: var(--shadow-dark--light);
   }
 
   .name-topic-text-input {
     font-family: inherit;
     font-size: 1.6rem;
-    padding: 1rem 0.5rem;
+    padding: 0.5rem 1rem;
     margin-top: 1.5rem;
     color: var(--color-grey);
     outline: none;
@@ -224,6 +234,21 @@ function Discussions() {
 
   const createTopicSection = useRef();
   const [formOpen, setFormOpen] = useState(false);
+  const fetcher = useFetcher();
+
+  // After creating a new post via action
+  useEffect(() => {
+    if (!fetcher?.data?.invalidInputError) {
+      setFormOpen(false);
+      const switchIntheChildComponent = document.getElementById("switch");
+      switchIntheChildComponent.click();
+    }
+    setTimeout(() => {
+      setDiscussions(topics);
+      setCurrentPage(1);
+      setPagesTotal(pagesTotalOnLoad);
+    }, 1000);
+  }, [topics, pagesTotalOnLoad]);
 
   return (
     <StyledDiscussions>
@@ -250,9 +275,7 @@ function Discussions() {
             className="search__input search-input"
             type="text"
           />
-          <Button size="small" onClick={() => setFormOpen(!formOpen)}>
-            {formOpen ? `Hide editor` : `Create a topic`}
-          </Button>
+          <Switch onClick={() => setFormOpen(!formOpen)} />
         </form>
       </header>
       <section
@@ -264,13 +287,22 @@ function Discussions() {
             : { height: 0 }
         }
       >
-        <Form method="post" className={`editor `}>
+        <fetcher.Form method="post" className="editor">
           <h2 className="tertiary-heading">Create a new topic:</h2>
           <input
+            name="title"
             className="name-topic-text-input"
             type="text"
             placeholder="Name a topic"
           />
+          <div>
+            {fetcher.data?.title && (
+              <p key={new Date()} className="error">
+                {fetcher.data.title}
+              </p>
+            )}
+          </div>
+
           <div className="editor__area">
             <div className="line">
               <CiTextAlignLeft />
@@ -282,15 +314,16 @@ function Discussions() {
               name="text"
               className="text-input-area"
             />
-            <input type="hidden" name="topicId" />
           </div>
+          {fetcher.data?.text && (
+            <p key={new Date()} className="error">
+              {fetcher.data.text}
+            </p>
+          )}
           <div>
-            {/* {actionFeedback?.inputError && (
-              <p className="error">{actionFeedback.message}</p>
-            )} */}
             <Button>Post message</Button>
           </div>
-        </Form>
+        </fetcher.Form>
       </section>
       <section className="topics">
         <ul className="topics__list">
@@ -364,10 +397,23 @@ function Discussions() {
 export default Discussions;
 
 export async function loader({ request }) {
+  console.log("I run");
   const page = 1;
   const url = new URL(request.url);
   const searchTitle = url.searchParams.get("searchTitle");
   const data = await getAllDiscussions(page, searchTitle);
   data.activeUsers = await getActiveUsers();
   return data;
+}
+
+export async function action({ request }) {
+  const { title, text } = Object.fromEntries(await request.formData());
+  try {
+    await createNewTopic(title, text);
+  } catch (e) {
+    const errors = e.response.data.errors;
+    errors.invalidInputError = true;
+    return errors;
+  }
+  return null;
 }

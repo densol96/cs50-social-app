@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import cs.densol.back_end.models.dto.NewTopicDto;
 import cs.densol.back_end.models.dto.PublishPostDto;
 import cs.densol.back_end.models.dto.PublishedPostDto;
 import cs.densol.back_end.models.dto.TopicDto;
@@ -44,6 +45,12 @@ public class DiscussionsController {
         return json;
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createNewTopic(@Valid @RequestBody NewTopicDto body) {
+        service.createNewTopic(body.title(), body.text());
+    }
+
     @GetMapping("/{topicId}")
     @ResponseStatus(HttpStatus.OK)
     public HashMap<String, Object> getTopicPosts(
@@ -56,7 +63,7 @@ public class DiscussionsController {
     }
 
     @PostMapping("/{topicId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public PublishedPostDto getTopicPosts(@Valid @RequestBody PublishPostDto body,
             @PathVariable(name = "topicId") Integer topicId) {
         return service.publishPost(body.text(), topicId);

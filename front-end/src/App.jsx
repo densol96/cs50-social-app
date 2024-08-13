@@ -21,6 +21,7 @@ import { initApp } from "./features/user/authSlice";
 import AppLayout from "./ui/AppLayout";
 import Discussions, {
   loader as discussionsLoader,
+  action as discussionsAction,
 } from "./features/discussions/Discussions";
 import Error from "./ui/Error";
 import Topic, {
@@ -67,6 +68,7 @@ const router = createBrowserRouter([
         element: <Discussions />,
         loader: discussionsLoader,
         errorElement: <Error />,
+        action: discussionsAction,
       },
       {
         path: "discussions/:id",

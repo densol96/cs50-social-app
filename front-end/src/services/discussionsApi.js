@@ -18,6 +18,19 @@ export async function getAllDiscussions(page, searchTitle) {
   return { topics: response.data.topics, pagesTotal: response.data.pagesTotal };
 }
 
+export async function createNewTopic(title, text) {
+  const response = await axios.post(
+    `${DISCUSSIONS_ENDPOINT}`,
+    { title, text },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+    }
+  );
+  console.log(response);
+}
+
 export async function getPostsPerTopic(topicId, page) {
   // /posts/:topicId
   const response = await axios.get(

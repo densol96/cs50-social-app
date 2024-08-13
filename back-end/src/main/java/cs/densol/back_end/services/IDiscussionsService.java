@@ -21,4 +21,6 @@ public interface IDiscussionsService {
 
     PublishedPostDto publishPost(String text, Integer topicId);
 
+    void createNewTopic(String title, String text);
+
 }
