@@ -28,6 +28,10 @@ import Topic, {
   loader as topicLoader,
   action as topicAction,
 } from "./features/discussions/Topic";
+import Settings from "./features/user/Settings";
+import PictureSubSettings from "./features/user/PictureSubSettings";
+import BasicSubsettings from "./features/user/BasicSubsettings";
+import SecuritySubSettings from "./features/user/SecuritySubSettings";
 
 const router = createBrowserRouter([
   {
@@ -78,8 +82,26 @@ const router = createBrowserRouter([
         action: topicAction,
       },
       {
-        path: "reviews",
-        element: <p>HELLO THERE</p>,
+        path: "settings",
+        element: <Settings />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="avatar" />,
+          },
+          {
+            path: "avatar",
+            element: <PictureSubSettings />,
+          },
+          {
+            path: "basic",
+            element: <BasicSubsettings />,
+          },
+          {
+            path: "security",
+            element: <SecuritySubSettings />,
+          },
+        ],
       },
     ],
   },
@@ -91,7 +113,6 @@ function App() {
     (state) => state.auth
   );
   useEffect(() => {
-    if (jwt) localStorage.setItem("jwt", jwt); // synchronise with logging out
     if (!jwt) {
       setTimeout(() => {
         dispatch(
@@ -101,12 +122,12 @@ function App() {
     } else {
       async function callServerForAuth() {
         try {
-          const { email, fullName } = await authenticate(jwt);
+          const { email, username } = await authenticate(jwt);
           dispatch(
             initApp({
               authenticated: true,
               serverCalled: true,
-              user: { email, fullName },
+              user: { email, username },
             })
           );
         } catch (e) {
@@ -121,6 +142,8 @@ function App() {
       }
       callServerForAuth();
     }
+
+    localStorage.setItem("jwt", jwt); // synchronise with logging out
   }, [jwt]);
 
   return (

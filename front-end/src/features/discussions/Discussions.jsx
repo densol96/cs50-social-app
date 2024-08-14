@@ -238,16 +238,16 @@ function Discussions() {
 
   // After creating a new post via action
   useEffect(() => {
-    if (!fetcher?.data?.invalidInputError) {
+    if (fetcher?.data?.postCreated) {
       setFormOpen(false);
       const switchIntheChildComponent = document.getElementById("switch");
       switchIntheChildComponent.click();
+      setTimeout(() => {
+        setDiscussions(topics);
+        setCurrentPage(1);
+        setPagesTotal(pagesTotalOnLoad);
+      }, 1000);
     }
-    setTimeout(() => {
-      setDiscussions(topics);
-      setCurrentPage(1);
-      setPagesTotal(pagesTotalOnLoad);
-    }, 1000);
   }, [topics, pagesTotalOnLoad]);
 
   return (
@@ -415,5 +415,5 @@ export async function action({ request }) {
     errors.invalidInputError = true;
     return errors;
   }
-  return null;
+  return { postCreated: true };
 }

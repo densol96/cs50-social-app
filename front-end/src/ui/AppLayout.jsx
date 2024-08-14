@@ -26,6 +26,8 @@ const StyledAppLayout = styled.div`
     background-color: var(--color-black--medium);
     width: 40rem;
     overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
 
     header {
       margin-bottom: var(--spacing--m);
@@ -63,7 +65,7 @@ const StyledAppLayout = styled.div`
       ul {
         display: flex;
         flex-direction: column;
-        gap: var(--gap--xs);
+        gap: var(--gap--xxs);
         line-height: var(--lh-med);
         position: relative;
 
@@ -97,7 +99,8 @@ const StyledAppLayout = styled.div`
       font-size: var(--font-size--s);
       padding: 0 3rem;
       text-align: center;
-      margin-top: 7.2rem;
+      margin-top: auto;
+      margin-bottom: 3rem;
 
       p {
         color: var(--color-grey--light);
@@ -186,25 +189,22 @@ function AppLayout() {
                 Discussions
               </li>
             </StyledNavLink>
-            <StyledNavLink to="reviews">
+            {/* <StyledNavLink to="reviews">
               <li>
                 <span className="icon">
                   <MdRateReview />
                 </span>{" "}
                 Reviews
               </li>
-            </StyledNavLink>
-            <StyledNavLink to="polls">
+            </StyledNavLink> */}
+            {/* <StyledNavLink to="polls">
               <li>
                 <span className="icon">
                   <FaPoll />
                 </span>{" "}
                 Polls
               </li>
-            </StyledNavLink>
-          </ul>
-
-          <ul>
+            </StyledNavLink> */}
             <StyledNavLink to="settings">
               <li>
                 <span className="icon">
@@ -217,6 +217,20 @@ function AppLayout() {
               <MdForum /> Log out
             </li>
           </ul>
+
+          {/* <ul>
+            <StyledNavLink to="settings">
+              <li>
+                <span className="icon">
+                  <IoSettings />
+                </span>{" "}
+                Settings
+              </li>
+            </StyledNavLink>
+            <li onClick={logout}>
+              <MdForum /> Log out
+            </li>
+          </ul> */}
         </nav>
         <footer>
           <p>

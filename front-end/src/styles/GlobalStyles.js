@@ -143,6 +143,10 @@ const GlobalStyles = createGlobalStyle`
         animation-duration: 500ms;
     }
 
+    .uppercase {
+        text-transform: uppercase;
+    }
+
     @keyframes moveInFromRight {
         0% {
             transform: translateX(20%);
