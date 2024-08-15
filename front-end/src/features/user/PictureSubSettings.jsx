@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../ui/Button";
 import styled from "styled-components";
 
@@ -101,26 +101,44 @@ const resultType = {
 };
 
 function PictureSubSettings() {
-  const pathToImageStorageOnServer = `http://localhost:8080/images/`;
-  const defaultAvatarUrl = pathToImageStorageOnServer + "default_avatar.jpg";
+  const PATH_TO_SERVER = `http://localhost:8080/images/`;
+  const defaultAvatarUrl = PATH_TO_SERVER + "default_avatar.jpg";
+
+  // null (if null, then want to render defaultAvatarUrl) or actual image-name.jpg
   const userAvatar = useSelector((state) => state.auth.user.avatar);
 
+  // actual bytes of image that we attach to the FormData
   const [imageFile, setImageFile] = useState(null);
+
+  // initState === userAvatarUrl
+  // if imagePreview == null, THEN defaultAvatar will be rendered
   const [imagePreview, setImagePreview] = useState(() =>
-    userAvatar ? pathToImageStorageOnServer + userAvatar : defaultAvatarUrl
+    userAvatar ? PATH_TO_SERVER + userAvatar : null
   );
+
+  /* Had to introduce this state too, cause otherwise the preview will have an avatar, but input.value will have no image-file
+   * and upon clicking UPLOAD, the null image will be sent to the server ==> user will end up with the default avatar.. Not the desired behaviour.
+   * Only render the upload button, if the suer uploaded / deleted custom avatar (so there is a change compared to data state on the server)
+   */
   const [actionPerformed, setActionPerformed] = useState(false);
 
   const dispatch = useDispatch();
 
+  /* null = do not render a message
+   * "success" / "false" messages
+   * self-disappearing after 2.5s or on changing the preview (it only should be referring to the status of "upload to server" action
+   * not changing the preview before comitting changes to the server)
+   */
   const [resultStatus, setResultStatus] = useState(null);
+
+  const inputField = useRef();
 
   function handleImageUpload(e) {
     setResultStatus(null); // result is available on actual upload to the server, not file / preview change to not confuse the user image was udpated pre-maturely
-    const image = e.target.files[0];
+    const image = e.target.files[0]; // null is a valid option in my implementation
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImagePreview(reader.result); // Store image data in state
+      setImagePreview(reader.result); // this is a result of readingDataUrl for preview
     };
     reader.readAsDataURL(image);
     setImageFile(image);
@@ -129,9 +147,11 @@ function PictureSubSettings() {
 
   function handleRemovingTheImage() {
     setResultStatus(null); // result is avaialable on actual upload to the server, not file / preview change to not confuse the user image was udpated pre-maturely
-    setImagePreview(defaultAvatarUrl);
+    setImagePreview(null);
+    inputField;
     setImageFile(null);
     setActionPerformed(true);
+    inputField.current.value = "";
   }
 
   async function uploadAvatarToServer(e) {
@@ -145,7 +165,7 @@ function PictureSubSettings() {
       setResultStatus(resultType.ERROR);
       setImageFile(null);
       setImagePreview(
-        userAvatar ? pathToImageStorageOnServer + userAvatar : defaultAvatarUrl
+        userAvatar ? PATH_TO_SERVER + userAvatar : defaultAvatarUrl
       );
       console.log("💥 ERROR LOG on uloading the image:", e);
     }
@@ -154,11 +174,13 @@ function PictureSubSettings() {
   }
 
   useEffect(() => {
+    let id;
     if (resultStatus !== null) {
-      setTimeout(() => {
+      id = setTimeout(() => {
         setResultStatus(null);
       }, 2500);
     }
+    return () => clearTimeout(id);
   }, [resultStatus]);
 
   return (
@@ -166,13 +188,18 @@ function PictureSubSettings() {
       <form className="settings__avatar" onSubmit={uploadAvatarToServer}>
         <h2 className="tertiary-heading settings__heading">Appearance</h2>
         <div className="row">
-          <img src={imagePreview} alt="Profile picture" className="avatar" />
+          <img
+            src={imagePreview || defaultAvatarUrl}
+            alt="Profile picture"
+            className="avatar"
+          />
           <div className="avatar__description">
             <p className="warning">
               In order for the profile picture to appear correctly choose file
               with the same dimensions (width = height)
             </p>
             <input
+              ref={inputField}
               onChange={handleImageUpload}
               className="file-input"
               id="avatar"
@@ -184,17 +211,18 @@ function PictureSubSettings() {
               <label className="avatar__label" name="avatar" htmlFor="avatar">
                 <FaFileDownload className="download-avatar" />
               </label>
-              {(userAvatar || imageFile) && (
+              {imagePreview && (
                 <MdDeleteForever
                   onClick={handleRemovingTheImage}
                   className="delete-avatar"
                 />
               )}
-              {actionPerformed && (
-                <Button className="btn--upload" size="small" type="submit">
-                  Upload
-                </Button>
-              )}
+              {actionPerformed &&
+                !(imagePreview === null && userAvatar === null) && (
+                  <Button className="btn--upload" size="small" type="submit">
+                    Upload
+                  </Button>
+                )}
             </div>
           </div>
         </div>
