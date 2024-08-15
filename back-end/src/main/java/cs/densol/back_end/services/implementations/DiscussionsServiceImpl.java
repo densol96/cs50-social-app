@@ -98,7 +98,8 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
                 post.getAuthor().getJoinDateTime(),
                 post.getAuthor().getPostsTotal(),
                 post.getText(),
-                post.getCreatedAt());
+                post.getCreatedAt(),
+                post.getAuthor().getAvatar());
     }
 
     @Override

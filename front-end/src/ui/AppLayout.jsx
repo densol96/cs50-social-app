@@ -65,7 +65,7 @@ const StyledAppLayout = styled.div`
       ul {
         display: flex;
         flex-direction: column;
-        gap: var(--gap--xxs);
+        gap: var(--gap--xs);
         line-height: var(--lh-med);
         position: relative;
 

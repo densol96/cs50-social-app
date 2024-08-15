@@ -104,6 +104,7 @@ const StyledTopic = styled.div`
 
         .avatar {
           width: 10rem;
+          height: 10rem;
           border-radius: 50%;
           margin-bottom: 2rem;
         }
@@ -270,6 +271,8 @@ function Topic() {
     //500ms tso the user can notice the transition: top first, then down to the post
   }, [publishedPost]);
 
+  console.log(posts);
+
   return (
     <StyledTopic>
       <header ref={ref} className="topic-header">
@@ -322,7 +325,13 @@ function Topic() {
                 <div className="main-content">
                   <aside className="author">
                     <p className="author__username">{post.authorUsername}</p>
-                    <img className="avatar" src="/avatar.jpg" alt="avatar" />
+                    <img
+                      className="avatar"
+                      src={`http://localhost:8080/images/${
+                        post.authorAvatar || `default_avatar.jpg`
+                      }`}
+                      alt="avatar"
+                    />
                     <p className="join-date">
                       <span className="sub-heading">Joined: </span>
                       {formattedDate(post.authorJoinDateTime)}

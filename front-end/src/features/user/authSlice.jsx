@@ -22,9 +22,12 @@ const authSlice = createSlice({
     logout(state, action) {
       state.jwt = "invalid";
     },
+    updateAvatar(state, action) {
+      state.user.avatar = action.payload;
+    },
   },
 });
 
-export const { initApp, saveJwt, logout } = authSlice.actions;
+export const { initApp, saveJwt, logout, updateAvatar } = authSlice.actions;
 
 export default authSlice.reducer;

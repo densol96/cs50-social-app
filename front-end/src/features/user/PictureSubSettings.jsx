@@ -4,7 +4,11 @@ import styled from "styled-components";
 
 import { FaFileDownload } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
-import { useFetcher } from "react-router-dom";
+
+import { uploadAvatar } from "../../services/settingsApi";
+import { useDispatch, useSelector } from "react-redux";
+
+import { updateAvatar } from "./authSlice";
 
 const StyledDiv = styled.div`
   .settings__avatar {
@@ -70,39 +74,99 @@ const StyledDiv = styled.div`
       }
     }
   }
+
+  .upload-result {
+    margin-top: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8rem;
+    border-radius: var(--border-radius--medium);
+    animation-name: moveInFromRight;
+    animation-duration: 1s;
+
+    &--success {
+      background-color: var(--color-success-transparent);
+    }
+
+    &--error {
+      background-color: var(--color-error-transparent);
+    }
+  }
 `;
 
+const resultType = {
+  SUCCESS: "success",
+  ERROR: "error",
+};
+
 function PictureSubSettings() {
-  const [avatar, setAvatar] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const pathToImageStorageOnServer = `http://localhost:8080/images/`;
+  const defaultAvatarUrl = pathToImageStorageOnServer + "default_avatar.jpg";
+  const userAvatar = useSelector((state) => state.auth.user.avatar);
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(() =>
+    userAvatar ? pathToImageStorageOnServer + userAvatar : defaultAvatarUrl
+  );
+  const [actionPerformed, setActionPerformed] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const [resultStatus, setResultStatus] = useState(null);
 
   function handleImageUpload(e) {
+    setResultStatus(null); // result is available on actual upload to the server, not file / preview change to not confuse the user image was udpated pre-maturely
     const image = e.target.files[0];
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result); // Store image data in state
     };
     reader.readAsDataURL(image);
-    setAvatar(image);
+    setImageFile(image);
+    setActionPerformed(true);
   }
 
   function handleRemovingTheImage() {
-    setImagePreview(null);
-    setAvatar(null);
+    setResultStatus(null); // result is avaialable on actual upload to the server, not file / preview change to not confuse the user image was udpated pre-maturely
+    setImagePreview(defaultAvatarUrl);
+    setImageFile(null);
+    setActionPerformed(true);
   }
 
-  const fetcher = useFetcher();
+  async function uploadAvatarToServer(e) {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    try {
+      dispatch(updateAvatar(await uploadAvatar(formData)));
+      setResultStatus(resultType.SUCCESS);
+    } catch (e) {
+      setResultStatus(resultType.ERROR);
+      setImageFile(null);
+      setImagePreview(
+        userAvatar ? pathToImageStorageOnServer + userAvatar : defaultAvatarUrl
+      );
+      console.log("💥 ERROR LOG on uloading the image:", e);
+    }
+    // wil require another upload / delete (a new change) in order to upload again
+    setActionPerformed(false);
+  }
+
+  useEffect(() => {
+    if (resultStatus !== null) {
+      setTimeout(() => {
+        setResultStatus(null);
+      }, 2500);
+    }
+  }, [resultStatus]);
 
   return (
     <StyledDiv>
-      <form className="settings__avatar">
+      <form className="settings__avatar" onSubmit={uploadAvatarToServer}>
         <h2 className="tertiary-heading settings__heading">Appearance</h2>
         <div className="row">
-          <img
-            src={imagePreview || `/avatar.jpg`}
-            alt="Profile picture"
-            className="avatar"
-          />
+          <img src={imagePreview} alt="Profile picture" className="avatar" />
           <div className="avatar__description">
             <p className="warning">
               In order for the profile picture to appear correctly choose file
@@ -120,18 +184,31 @@ function PictureSubSettings() {
               <label className="avatar__label" name="avatar" htmlFor="avatar">
                 <FaFileDownload className="download-avatar" />
               </label>
-              <MdDeleteForever
-                onClick={handleRemovingTheImage}
-                className="delete-avatar"
-              />
-              <Button className="btn--upload" size="small" type="submit">
-                Upload
-              </Button>
+              {(userAvatar || imageFile) && (
+                <MdDeleteForever
+                  onClick={handleRemovingTheImage}
+                  className="delete-avatar"
+                />
+              )}
+              {actionPerformed && (
+                <Button className="btn--upload" size="small" type="submit">
+                  Upload
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </form>
-      <img src="http://localhost:8080/avatar.jpg" alt="" />
+      {resultStatus === resultType.SUCCESS && (
+        <p key={new Date()} className="upload-result upload-result--success">
+          Your profile picture has sucessfully been updated!
+        </p>
+      )}
+      {resultStatus === resultType.ERROR && (
+        <p key={new Date()} className="upload-result upload-result--error">
+          Image upload service is curretnly down! Try again later 😿
+        </p>
+      )}
     </StyledDiv>
   );
 }

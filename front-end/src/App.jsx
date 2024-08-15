@@ -112,6 +112,7 @@ function App() {
   let { jwt, authenticated, serverCalled, user } = useSelector(
     (state) => state.auth
   );
+  console.log(user);
   useEffect(() => {
     if (!jwt) {
       setTimeout(() => {
@@ -122,12 +123,12 @@ function App() {
     } else {
       async function callServerForAuth() {
         try {
-          const { email, username } = await authenticate(jwt);
+          const { email, username, avatar } = await authenticate(jwt);
           dispatch(
             initApp({
               authenticated: true,
               serverCalled: true,
-              user: { email, username },
+              user: { email, username, avatar },
             })
           );
         } catch (e) {

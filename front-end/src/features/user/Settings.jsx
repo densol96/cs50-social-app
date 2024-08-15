@@ -7,6 +7,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import PictureSubSettings from "./PictureSubSettings";
 import BasicSubsettings from "./BasicSubsettings";
 import SecuritySubSettings from "./SecuritySubSettings";
+import SharedNotification from "../../ui/SharedNotification";
 
 const StyledSettings = styled.div`
   width: 55%;

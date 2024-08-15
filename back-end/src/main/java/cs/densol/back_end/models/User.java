@@ -66,6 +66,8 @@ public class User implements UserDetails {
     @Max(value = 50000, message = "Total posts number is unlikely to be more than 50000")
     private Integer postsTotal = 0;
 
+    private String avatar;
+
     public User(String username, String encodedPassword, String email) {
         this.username = username;
         this.password = encodedPassword;

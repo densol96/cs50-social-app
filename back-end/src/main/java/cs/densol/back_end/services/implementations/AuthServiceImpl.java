@@ -3,7 +3,6 @@ package cs.densol.back_end.services.implementations;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -87,7 +86,7 @@ public class AuthServiceImpl implements IAuthService {
     @Override
     public MeDto getMe() {
         User user = extractUserFromCurrentRequest();
-        return new MeDto(user.getEmail(), user.getActualUsername());
+        return new MeDto(user.getEmail(), user.getActualUsername(), user.getAvatar());
     }
 
     @Override
