@@ -161,7 +161,7 @@ function AppLayout() {
   useEffect(() => {
     if (!authenticated) {
       setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 3000);
     }
   }, [authenticated]);

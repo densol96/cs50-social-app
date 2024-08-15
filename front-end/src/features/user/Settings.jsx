@@ -33,6 +33,12 @@ const StyledSettings = styled.div`
       display: flex;
       justify-content: space-between;
       align-items: center;
+      text-transform: uppercase;
+      font-weight: 700;
+
+      &:not(:last-of-type) {
+        margin-bottom: 1rem;
+      }
     }
 
     &__input {
@@ -48,7 +54,7 @@ const StyledSettings = styled.div`
 
     .btn {
       display: block;
-      margin: 2rem auto;
+      margin: 4rem auto;
     }
   }
 

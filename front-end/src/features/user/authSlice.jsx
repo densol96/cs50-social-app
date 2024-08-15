@@ -19,7 +19,7 @@ const authSlice = createSlice({
     saveJwt(state, action) {
       state.jwt = action.payload;
     },
-    logout(state, action) {
+    logout(state) {
       state.jwt = "invalid";
     },
     updateAvatar(state, action) {

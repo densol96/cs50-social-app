@@ -30,8 +30,12 @@ import Topic, {
 } from "./features/discussions/Topic";
 import Settings from "./features/user/Settings";
 import PictureSubSettings from "./features/user/PictureSubSettings";
-import BasicSubsettings from "./features/user/BasicSubsettings";
-import SecuritySubSettings from "./features/user/SecuritySubSettings";
+import BasicSubsettings, {
+  action as changeBasicSettings,
+} from "./features/user/BasicSubsettings";
+import SecuritySubSettings, {
+  action as changeSecuritySettings,
+} from "./features/user/SecuritySubSettings";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +88,7 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <Settings />,
+
         children: [
           {
             index: true,
@@ -96,10 +101,12 @@ const router = createBrowserRouter([
           {
             path: "basic",
             element: <BasicSubsettings />,
+            action: changeBasicSettings,
           },
           {
             path: "security",
             element: <SecuritySubSettings />,
+            action: changeSecuritySettings,
           },
         ],
       },
@@ -112,7 +119,7 @@ function App() {
   let { jwt, authenticated, serverCalled, user } = useSelector(
     (state) => state.auth
   );
-  console.log(user);
+
   useEffect(() => {
     if (!jwt) {
       setTimeout(() => {

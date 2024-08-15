@@ -12,3 +12,11 @@ export async function uploadAvatar(formData) {
   });
   return response.data.avatar;
 }
+
+export async function updateSettings(path, formData) {
+  const response = await axios.patch(`${SETTINGS_ENDPOINT}/${path}`, formData, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+    },
+  });
+}

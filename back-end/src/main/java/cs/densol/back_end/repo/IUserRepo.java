@@ -13,5 +13,7 @@ public interface IUserRepo extends JpaRepository<User, Integer> {
 
     Boolean existsByEmail(String email);
 
+    Boolean existsByUsername(String username);
+
     List<User> findByLastActiveIsGreaterThanEqual(LocalDateTime activeThreshold);
 }

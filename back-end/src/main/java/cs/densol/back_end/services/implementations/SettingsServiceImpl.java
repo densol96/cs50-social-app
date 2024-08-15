@@ -1,11 +1,15 @@
 package cs.densol.back_end.services.implementations;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import cs.densol.back_end.exceptions.AppException;
+import cs.densol.back_end.exceptions.InvalidFieldsException;
 import cs.densol.back_end.models.User;
+import cs.densol.back_end.models.dto.BasicSettingsDto;
+import cs.densol.back_end.models.dto.SecuritySettingsDto;
 import cs.densol.back_end.repo.IUserRepo;
 import cs.densol.back_end.services.IAuthService;
 import cs.densol.back_end.services.ISettingsService;
@@ -19,6 +23,7 @@ public class SettingsServiceImpl implements ISettingsService {
 
     private final IAuthService authService;
     private final IUserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
     private final String uploadPath = "/home/solodeni/studying/cs_50_stuff/cs50-social-app/back-end/src/main/resources/static/images/";
 
     @Override
@@ -56,4 +61,44 @@ public class SettingsServiceImpl implements ISettingsService {
         return currentUser.getAvatar();
     }
 
+    @Override
+    public void updateBasicInfo(BasicSettingsDto data) {
+        User currentUser = authService.extractUserFromCurrentRequest();
+        String username = data.username();
+        String email = data.email();
+        if (!currentUser.getActualUsername().equals(username) && userRepo.existsByUsername(username)) {
+            throw new AppException("This username is taken", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!currentUser.getEmail().equals(email) && userRepo.existsByEmail(email)) {
+            throw new AppException("This email is taken", HttpStatus.BAD_REQUEST);
+        }
+        currentUser.setEmail(email);
+        currentUser.setUsername(username);
+        userRepo.save(currentUser);
+    }
+
+    @Override
+    public void updateSecurityInfo(SecuritySettingsDto data) {
+
+        User currentUser = authService.extractUserFromCurrentRequest();
+
+        String currentPassword = data.currentPassword();
+        String newPassword = data.newPassword();
+        String confirmationPassword = data.passwordConfirmation();
+
+        if (!newPassword.equals(confirmationPassword)) {
+            System.out.println(!newPassword.equals(confirmationPassword));
+            System.out.println(newPassword + " --- " + confirmationPassword);
+            throw new AppException("New password and confirmation do not match", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (!passwordEncoder.matches(currentPassword, currentUser.getPassword())) {
+            throw new AppException("Incorrect current password", HttpStatus.BAD_REQUEST);
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(currentUser);
+    }
 }
