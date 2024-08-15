@@ -16,6 +16,7 @@ import cs.densol.back_end.services.ISettingsService;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -66,12 +67,18 @@ public class SettingsServiceImpl implements ISettingsService {
         User currentUser = authService.extractUserFromCurrentRequest();
         String username = data.username();
         String email = data.email();
+
+        var errors = new HashMap<String, String>();
+
         if (!currentUser.getActualUsername().equals(username) && userRepo.existsByUsername(username)) {
-            throw new AppException("This username is taken", HttpStatus.BAD_REQUEST);
+            errors.put("username", "This username is taken");
+            throw new InvalidFieldsException(errors);
         }
 
         if (!currentUser.getEmail().equals(email) && userRepo.existsByEmail(email)) {
-            throw new AppException("This email is taken", HttpStatus.BAD_REQUEST);
+            errors.put("email", "This email is taken");
+            throw new InvalidFieldsException(errors);
+            // throw new AppException("This email is taken", HttpStatus.BAD_REQUEST);
         }
         currentUser.setEmail(email);
         currentUser.setUsername(username);

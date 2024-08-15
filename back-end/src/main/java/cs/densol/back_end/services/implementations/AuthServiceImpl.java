@@ -51,6 +51,11 @@ public class AuthServiceImpl implements IAuthService {
             throw new InvalidFieldsException(fieldErrors);
         }
 
+        if (userRepo.existsByUsername(data.username())) {
+            fieldErrors.put("username", "Username is already in use");
+            throw new InvalidFieldsException(fieldErrors);
+        }
+
         User user = new User();
         user.setEmail(data.email());
         user.setUsername(data.username());

@@ -49,7 +49,7 @@ public class BackEndApplication {
 			// Generate more topic and posts
 			for (int i = 0; i < 10; i++) {
 				// Create a topic + original post
-				Topic topic = new Topic(i < 8 ? "Topic one" : "Anime is nice", me);
+				Topic topic = new Topic(i < 8 ? "What was your favorite lecture?" : "Back end or front end?", me);
 				topicRepo.save(topic);
 				Post p = new Post(me,
 						"Has anyone tried the new software update? I'm noticing a significant improvement in performance, but still encountering some minor bugs. Curious to hear your thoughts!",
@@ -67,7 +67,7 @@ public class BackEndApplication {
 				} else {
 					for (int j = 0; j < 12; j++) {
 						Post posty = new Post(me,
-								"Has anyone tried the new software update? I'm noticing a significant improvement in performance, but still encountering some minor bugs. Curious to hear your thoughts!",
+								"I really liked CS50 course, and I would recommend anyone to try it! ",
 								topic);
 						postRepo.save(posty);
 					}
