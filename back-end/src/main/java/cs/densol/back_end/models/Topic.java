@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import cs.densol.back_end.models.Post;
 
@@ -54,6 +55,13 @@ public class Topic {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     public Topic(String title, User author) {
+        this.title = title;
+        this.author = author;
+    }
+
+    // Need an AllRequiredArgsConstructor
+    public Topic(Integer id, String title, User author) {
+        this.id = id;
         this.title = title;
         this.author = author;
     }

@@ -21,6 +21,7 @@ import cs.densol.back_end.models.dto.TopicDto;
 import cs.densol.back_end.repo.IPostRepo;
 import cs.densol.back_end.repo.ITopicRepo;
 import cs.densol.back_end.repo.IUserRepo;
+import cs.densol.back_end.services.DiscussionsMapper;
 import cs.densol.back_end.services.IAuthService;
 import cs.densol.back_end.services.IDiscussionsService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
     private final IPostRepo postRepo;
     private final IAuthService authService;
     private final IUserRepo userRepo;
+    private final DiscussionsMapper mapper;
 
     @Override
     public List<TopicDto> getAllTopics(Integer page, String searchTitle) {
@@ -49,21 +51,7 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
 
         List<Topic> results = searchTitle == null ? topicRepo.findAll(pageable).toList()
                 : topicRepo.findAllByTitleContaining(pageable, searchTitle);
-        return results.stream().map(topic -> mapTopicToDto(topic)).collect(Collectors.toList());
-    }
-
-    private TopicDto mapTopicToDto(Topic topic) {
-
-        AuthorDto authorDto = new AuthorDto(topic.getAuthor().getActualUsername(), topic.getAuthor().getEmail());
-
-        return new TopicDto(
-                topic.getId(),
-                topic.getTitle(),
-                topic.getOriginalPost().getText(),
-                authorDto,
-                topic.getCreatedAt(),
-                topic.getUpdatedAt(),
-                topic.getPosts().size());
+        return results.stream().map(topic -> mapper.topicToDto(topic)).collect(Collectors.toList());
     }
 
     @Override
@@ -87,19 +75,8 @@ public class DiscussionsServiceImpl implements IDiscussionsService {
             throw new AppException("No topic with such id", HttpStatus.BAD_REQUEST);
         }
         Pageable pageable = PageRequest.of(page, RESULTS_PER_PAGE, Sort.by("createdAt").ascending());
-        return postRepo.findByTopicId(topicId, pageable).stream().map(post -> postToDto(post))
+        return postRepo.findByTopicId(topicId, pageable).stream().map(post -> mapper.postToDto(post))
                 .collect(Collectors.toList());
-    }
-
-    private PostDto postToDto(Post post) {
-        return new PostDto(
-                post.getId(),
-                post.getAuthor().getActualUsername(),
-                post.getAuthor().getJoinDateTime(),
-                post.getAuthor().getPostsTotal(),
-                post.getText(),
-                post.getCreatedAt(),
-                post.getAuthor().getAvatar());
     }
 
     @Override
